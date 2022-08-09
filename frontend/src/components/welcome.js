@@ -1,13 +1,11 @@
 import React from 'react';
-import TopBar from './topbar.js'
+import TopBar from './topBar.js'
 
 class Welcome extends React.Component{
     render() {
         return (
             <div>
-                <div>
-                    <TopBar/>
-                </div>
+                <TopBar/>
             </div>
         );
     }

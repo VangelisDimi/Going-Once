@@ -4,8 +4,8 @@ import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import './index.css';
 
 import Welcome from './components/welcome';
-import Signup from './components/Signup';
-import NotFound from './components/NotFound';
+import Signup from './components/signup';
+import NotFound from './components/notFound';
 
 
 // ========================================
