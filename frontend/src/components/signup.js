@@ -1,5 +1,5 @@
 import React from 'react';
-import TopBar from './topBar';
+import DashBoard from './dashBoard';
 
 class SignupForm extends React.Component{
     render(){
@@ -69,7 +69,7 @@ class Signup extends React.Component{
     render() {
         return(
             <div>
-                <TopBar/>
+                <DashBoard/>
                 <SignupForm/>
             </div>
         );

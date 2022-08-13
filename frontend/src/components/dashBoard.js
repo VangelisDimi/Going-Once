@@ -33,7 +33,7 @@ class LoginField extends React.Component{
     }
 }
 
-class TopBar extends React.Component{
+class DashBoard extends React.Component{
     render() {
         return(
             <div>
@@ -48,4 +48,4 @@ class TopBar extends React.Component{
     }
 }
 
-export default TopBar;
+export default DashBoard;

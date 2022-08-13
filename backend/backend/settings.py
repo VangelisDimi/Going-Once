@@ -14,6 +14,7 @@ from pathlib import Path
 import json
 import os
 from django.core.exceptions import ImproperlyConfigured
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -52,9 +53,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     #Installed
     'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
     #API folders
-    'users' 
+    'users',
 ]
 
 MIDDLEWARE = [
@@ -67,7 +69,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     #Installed
     'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware'
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -102,7 +104,7 @@ DATABASES = {
         'PASSWORD': get_secret('DB_PASSWORD'),
         'HOST': 'localhost',
         'PORT': '5432'
-    }
+    },
 }
 
 
@@ -149,3 +151,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #For working with localhost
 CORS_ORIGIN_ALLOW_ALL = True
+
+#Custom user models
+AUTH_USER_MODEL = 'users.AppUser'
+
+#Rest settings
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': ('rest_framework_simplejwt.authentication.JWTAuthentication',),
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'USER_AUTHENTICATION_RULE': 'utils.authentication.user_authentication_rule',
+}

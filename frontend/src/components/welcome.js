@@ -1,11 +1,11 @@
 import React from 'react';
-import TopBar from './topBar.js'
+import DashBoard from './dashBoard.js'
 
 class Welcome extends React.Component{
     render() {
         return (
             <div>
-                <TopBar/>
+                <DashBoard/>
             </div>
         );
     }
