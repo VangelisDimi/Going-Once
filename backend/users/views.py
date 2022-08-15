@@ -1,18 +1,27 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.exceptions import AuthenticationFailed
-from rest_framework import status,permissions
-
-import datetime
+from rest_framework import status
+from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth import get_user_model
 
 from .serializers import UserSerializer
-from .models import AppUser
+from django.core import exceptions
+from rest_framework import serializers
 
 # Create your views here.
 class RegisterView(APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+
+        errors = dict() 
+        try:
+            validate_password(serializer.validated_data['password'],get_user_model())
+        except exceptions.ValidationError as exception:
+            errors['password'] = list(exception.messages)
+        if errors:
+            raise serializers.ValidationError(errors)
+        
         serializer.save()
-        return Response(serializer.data,status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_201_CREATED)
     

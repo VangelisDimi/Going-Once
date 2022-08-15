@@ -5,7 +5,7 @@ class Welcome extends React.Component{
     render() {
         return (
             <div>
-                <DashBoard/>
+                <DashBoard page="welcome"/>
             </div>
         );
     }
