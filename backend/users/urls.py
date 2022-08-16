@@ -1,6 +1,6 @@
 # from .views import RegisterAPI
 from django.urls import path,include
-from .views import RegisterView#,LoginView
+from .views import UserRegisterView,AdminRegisterView #LoginViews
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -9,8 +9,9 @@ from rest_framework_simplejwt.views import (
 
 #API endpoints
 urlpatterns = [
-    path('register/', RegisterView.as_view()), #Register
-    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'), #Login
-    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'), #Refresh Login
-    path('token/blacklist/', TokenBlacklistView.as_view(), name='token_blacklist'), #Logout
+    path('register/', UserRegisterView.as_view()), #Register user
+    path('admin/register/', AdminRegisterView.as_view()), #Register admin
+    path('token/', TokenObtainPairView.as_view()), #Login
+    path('token/refresh/', TokenRefreshView.as_view()), #Refresh Login
+    path('token/blacklist/', TokenBlacklistView.as_view()), #Logout
 ]

@@ -1,15 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
-#Models
-class AppUser(AbstractUser):
-    # pk = id
+class BaseUser(AbstractUser):
+    #pk = id
     #Inherits: username,first_name,last_name,email,password,is_staff
-    
+    is_approved = models.BooleanField(default=False)
+
+#Models
+class AppUser(BaseUser):
     #Inherited
-    first_name = models.CharField( max_length=150, blank=False)
-    last_name = models.CharField(max_length=150, blank=False)
-    email = models.EmailField(unique=True,blank=False)
+    AbstractUser.is_staff.value=False
     #Added
     phone_number = models.CharField(max_length=50)
     street_name = models.CharField(max_length=50)
@@ -18,4 +18,7 @@ class AppUser(AbstractUser):
     country = models.CharField(max_length=50)
     location = models.CharField(max_length=50)
     tin = models.CharField(max_length=50)
-    is_approved = models.BooleanField(default=False)
+
+class AppAdmin(BaseUser):
+    #Inherited
+    AbstractUser.is_staff.value=False

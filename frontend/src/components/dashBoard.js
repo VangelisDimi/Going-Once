@@ -1,65 +1,56 @@
-import React from 'react';
-import {Link} from 'react-router-dom';
+import { useState } from 'react';
 import axios from '../axios_config'
+import { useNavigate } from 'react-router-dom';
 
-class SignupButton extends React.Component{
-    render(){
-        return(
-            <div>
-                <Link to="/signup">
-                    <button>Signup</button>
-                </Link>
-            </div>
-        );
-    }
+function SignupButton(){
+    const navigate = useNavigate();
+    return(
+        <button onClick={() => navigate("/signup")}>Signup</button>
+    );
 }
 
-class LoginField extends React.Component{
-    constructor(props) {
-        super(props);
-        this.state = {
-            username: '',
-            password: '',
-        };
-        this.onChange = this.onChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-    }
+function HomeButton()
+{
+    const navigate = useNavigate();
+    return(
+        <button onClick={() => navigate("/welcome")}>Logo</button>
+    );
+}
 
-    render() {
-        return (
-            <form onSubmit={this.handleSubmit}> 
-                <label>
-                    Username
-                    <input placeholder="Username" type="text" id="username" onChange={this.onChange} required/>
-                    <br></br>
-                </label>
-                <label>
-                    Password
-                    <input placeholder="Password" type="password" id="password" onChange={this.onChange} required/>
-                    <br></br>
-                </label>
-                <div>
-                    <button type="submit">Log-In</button>
-                </div>
-            </form>
-        );
-    }
+function LoginField(){
+    const [values,setValues] = useState({
+        login_username: '',
+        login_password: '',
+    });
 
-    onChange(event) {
-        if (event.target.id === 'username') {
-            this.setState({ username: event.target.value });
-        } 
-        else if (event.target.id === 'password') {
-            this.setState({ password: event.target.value });
-        }
-    }
+    return (
+        <form onSubmit={handleSubmit}> 
+            <label>
+                Username
+                <input placeholder="Username" type="text" id="login_username" onChange={onChange} required/>
+                <br></br>
+            </label>
+            <label>
+                Password
+                <input placeholder="Password" type="password" id="login_password" onChange={onChange} required/>
+                <br></br>
+            </label>
+            <div>
+                <button type="submit">Log-In</button>
+            </div>
+        </form>
+    );
 
-    handleSubmit(event){
+    function onChange(event) {
+        setValues({...values, [event.target.id]: event.target.value})
+    };
+
+    function handleSubmit(event){
         event.preventDefault();
         
         const data = new FormData();
-        data.append("username",this.state.username)
-        data.append("password",this.state.password)
+        data.append("username",values.username)
+        data.append("password",values.password)
 
         axios.post(`users/token/`,data
         )
@@ -84,38 +75,26 @@ class LoginField extends React.Component{
             }
             console.log(error.config);
         });
-    }
+    };
 }
 
-class DashBoard extends React.Component{
-    render(page) {
-        if(this.props.page==="welcome") {
-            return(
-                <div>
-                    <Link to="/welcome">
-                        <button>Logo</button>
-                    </Link>
-                    <div>
-                        <LoginField/>
-                    </div>
-                    <div>
-                        <SignupButton/>
-                    </div>
-                </div>
-            );
-        }
-        else if(this.props.page==="signup") {
-            return(
-                <div>
-                    <Link to="/welcome">
-                        <button>Logo</button>
-                    </Link>
-                    <div>
-                        <LoginField/>
-                    </div>
-                </div>
-            );
-        }
+function DashBoard(props){
+    if(props.page==="welcome") {
+        return(
+            <div>
+                <HomeButton/>
+                <LoginField/>
+                <SignupButton/>
+            </div>
+        );
+    }
+    else if(props.page==="signup") {
+        return(
+            <div>
+                <HomeButton/>
+                <LoginField/>
+            </div>
+        );
     }
 }
 
