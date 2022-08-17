@@ -9,25 +9,8 @@ https://docs.djangoproject.com/en/4.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
-
-from pathlib import Path
-import json
-import os
-from django.core.exceptions import ImproperlyConfigured
 from datetime import timedelta
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-with open(os.path.join(BASE_DIR, 'secrets.json')) as secrets_file:
-    secrets = json.load(secrets_file)
-
-def get_secret(setting, secrets=secrets):
-    """Get secret setting or fail with ImproperlyConfigured"""
-    try:
-        return secrets[setting]
-    except KeyError:
-        raise ImproperlyConfigured("Set the {} setting".format(setting))
+from utils.json_read import get_secret
 
 
 # Quick-start development settings - unsuitable for production
@@ -158,7 +141,7 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 #Custom user models
-AUTH_USER_MODEL = 'users.AppUser'
+AUTH_USER_MODEL = 'users.BaseUser'
 
 #Rest settings
 REST_FRAMEWORK = {
