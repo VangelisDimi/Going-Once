@@ -1,12 +1,14 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import get_user_model
 
 from .serializers import UserSerializer,AdminSerializer
 from django.core import exceptions
 from rest_framework import serializers
+from .models import AppUser
 
 # Create your views here.
 class UserRegisterView(APIView):
@@ -40,4 +42,12 @@ class AdminRegisterView(APIView):
         
         serializer.save()
         return Response(status=status.HTTP_201_CREATED)
+
+class UserGetPersonalView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self,request):
+        user = AppUser.objects.get(pk=request.user.pk)
+        serializer = UserSerializer(user)
+        return Response(serializer.data)
     

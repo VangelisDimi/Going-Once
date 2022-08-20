@@ -1,4 +1,5 @@
 from functools import partial
+from operator import truediv
 from django.core.management.base import BaseCommand, CommandError
 from django.contrib.auth.password_validation import validate_password
 from django.core import exceptions
@@ -21,8 +22,11 @@ class Command(BaseCommand):
                  'password':get_secret('ADMIN_PASSWORD')
                 }
 
-        User = BaseUser.objects.get(username = username)
-        #Admin Already exists
+        try:
+            User = BaseUser.objects.get(username = username)
+        except:
+            User = None
+        #User Already exists
         if User:
             if User.is_superuser and User.is_staff:
                 #Change password

@@ -2,15 +2,17 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import './index.css';
 
-import Welcome from './components/welcome';
-import Signup,{SignupSuccess} from './components/signup';
-import NotFound from './components/notFound';
-import Admin from './components/admin'
+import Welcome from './pages/welcome';
+import Signup,{SignupSuccess} from './pages/signup';
+import NotFound from './pages/notFound';
+import Admin from './pages/admin'
+import DashBoard from './components/dashBoard'
 
 function App()
 {
     return (
         <BrowserRouter>
+        <DashBoard/>
         <Routes>
             <Route
                 exact path="/"

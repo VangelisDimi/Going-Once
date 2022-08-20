@@ -1,9 +1,7 @@
-import DashBoard from './dashBoard.js'
-
 function Welcome(){
     return (
         <div>
-            <DashBoard page="welcome"/>
+            Welcome to the page!
         </div>
     );
 }

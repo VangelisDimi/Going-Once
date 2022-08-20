@@ -6,10 +6,10 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = AppUser
 
-        fields = ('pk','username','first_name','last_name','email','password',
+        fields = ('username','first_name','last_name','email','password',
         'phone_number','street_name','street_number','postal_code','country','location','tin')
         extra_kwargs = {'password': {'write_only': True}}
-        optional_fields = []
+        
     
     def create(self, validated_data):
         password = validated_data.pop('password', None)
@@ -19,14 +19,32 @@ class UserSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+    def update(self, instance, validated_data):
+        instance.username = validated_data.get('username', instance.username)
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.email = validated_data.get('email', instance.email)
+        password = validated_data.pop('password', None)
+        if password is not None:
+                instance.set_password(password)
+        instance.phone_number = validated_data.get('phone_number', instance.phone_number)
+        instance.street_name = validated_data.get('street_name', instance.street_name)
+        instance.street_number = validated_data.get('street_number', instance.street_number)
+        instance.postal_code = validated_data.get('postal_code', instance.postal_code)
+        instance.country = validated_data.get('country', instance.country)
+        instance.location = validated_data.get('location', instance.location)
+        instance.tin = validated_data.get('tin', instance.tin)
+
+        instance.save()
+        return instance
+
 class AdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = BaseUser
 
-        fields = ('pk','username','first_name','last_name','email','password',
+        fields = ('username','first_name','last_name','email','password',
         )
-        extra_kwargs = {'password': {'write_only': True}}
-        optional_fields = []
+        extra_kwargs = {'password':{'write_only': True}}
     
     def create(self, validated_data):
         password = validated_data.pop('password', None)
@@ -54,11 +72,10 @@ class AdminSerializer(serializers.ModelSerializer):
 class SuperAdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = BaseUser
-        fields = ('pk','username','password',
+        fields = ('username','password',
         )
         extra_kwargs = {'password': {'write_only': True}}
-        optional_fields = []
-    
+
     def create(self, validated_data):
         password = validated_data.pop('password', None)
         instance = self.Meta.model(**validated_data)
