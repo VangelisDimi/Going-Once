@@ -1,5 +1,6 @@
+import {useContext} from 'react';
 import { useNavigate } from 'react-router-dom';
-import {login} from '../auth';
+import AuthContext from '../auth';
 
 function SignupButton(){
     const navigate = useNavigate();
@@ -9,6 +10,8 @@ function SignupButton(){
 }
 
 function LoginField(){
+    const login = useContext(AuthContext);
+
     return (
         <form onSubmit={handleSubmit}> 
             <label>

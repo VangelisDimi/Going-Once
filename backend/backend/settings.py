@@ -52,7 +52,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     #Installed
     'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -151,9 +150,9 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),#Should be at least 2-3 minutes to work correctly with backend
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'USER_AUTHENTICATION_RULE': 'utils.authentication.user_authentication_rule',
-    'ROTATE_REFRESH_TOKEN': True,
+    'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
 }

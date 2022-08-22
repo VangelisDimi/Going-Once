@@ -1,6 +1,6 @@
-import { useEffect  } from 'react';
+import { useEffect,useContext  } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {signup} from '../auth'
+import AuthContext from '../auth';
 
 function SignupSuccess(){
     const navigate = useNavigate();
@@ -21,6 +21,7 @@ function SignupSuccess(){
 
 function SignupForm(){
     const navigate = useNavigate();
+    const {signup} = useContext(AuthContext);
 
     return(
         <form onSubmit={HandleSubmit}>

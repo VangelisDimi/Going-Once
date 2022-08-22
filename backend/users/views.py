@@ -9,6 +9,7 @@ from .serializers import UserSerializer,AdminSerializer
 from django.core import exceptions
 from rest_framework import serializers
 from .models import AppUser
+from utils.permissions import IsAppUser
 
 # Create your views here.
 class UserRegisterView(APIView):
@@ -44,7 +45,7 @@ class AdminRegisterView(APIView):
         return Response(status=status.HTTP_201_CREATED)
 
 class UserGetPersonalView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated & IsAppUser]
 
     def get(self,request):
         user = AppUser.objects.get(pk=request.user.pk)
