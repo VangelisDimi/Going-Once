@@ -1,100 +1,27 @@
-import axios from 'axios';
-import {createContext,useState,useEffect} from 'react';
+import {createContext,useState} from 'react';
 import { useNavigate } from 'react-router-dom';
+import {axios} from './axios_config'
 
-// Global axios settings
-const axios_ins = axios.create({
-    baseURL: 'http://localhost:8000/'
-});
 const AuthContext = createContext();
 
 const AuthInfo = ({children}) => {
     const navigate = useNavigate();
     const [authTokens, setAuthTokens] = useState(() => localStorage.getItem('authTokens') ? JSON.parse(localStorage.getItem('authTokens')) : null);
-    let [loading, setLoading] = useState(true)
 
     const contextData = {
         authTokens:authTokens,
+        setAuthTokens:setAuthTokens,
         login: login,
         signup: signup,
         logout: logout
     };
 
-    useEffect(() => {
-        const updateToken = () => {
-            const data = new FormData();
-            data.append("refresh",authTokens.refresh);
-    
-            axios_ins.post(`users/token/refresh/`,data)
-            .then(res => {
-                setAuthTokens(res.data);
-                localStorage.setItem('authTokens', JSON.stringify(res.data));
-            })
-            .catch(function (error) {
-                if (error.response) {
-                    blacklist_token();
-                }
-            });
-    
-            if(loading){
-                setLoading(false);
-            }
-        };
-
-        const blacklist_token = () => {
-            const data = new FormData();
-            data.append("refresh",authTokens.refresh)
-    
-            axios_ins.post(`users/token/blacklist/`,data)
-            .then(res => {
-                console.log(res);
-            })
-            .catch(function (error) {
-                if (error.response) {
-                // The request was made and the server responded with a status code
-                // that falls out of the range of 2xx
-                console.log(error.response.data);
-                console.log(error.response.status);
-                console.log(error.response.headers);
-                } else if (error.request) {
-                // The request was made but no response was received
-                // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-                // http.ClientRequest in node.js
-                console.log(error.request);
-                } else {
-                // Something happened in setting up the request that triggered an Error
-                console.log('Error', error.message);
-                }
-                console.log(error.config);
-            });
-    
-            setAuthTokens(null);
-            localStorage.removeItem('authTokens');
-        };
-
-        if(authTokens) {
-            if(loading){
-                updateToken();
-            }
-
-            const refresh_time = 1000 * 60 * 0.1;
-
-            const interval =  setInterval(()=> { 
-                console.log("refresh");
-                if(authTokens){
-                    updateToken();
-                }
-            }, refresh_time)
-            return ()=> clearInterval(interval)
-        }
-        else {
-            setLoading(false);
-        }
-    }, [authTokens, loading]);
+    // useEffect(() => {
+    // });
 
     return(
         <AuthContext.Provider value={contextData}>
-            {loading ? null : children}
+            {children}
         </AuthContext.Provider>
     );
 
@@ -103,7 +30,7 @@ const AuthInfo = ({children}) => {
         data.append("username",event.target.username.value)
         data.append("password",event.target.password.value)
 
-        axios_ins.post(`users/token/`,data
+        axios.post(`users/token/`,data
         )
         .then(res => {
             setAuthTokens(res.data);
@@ -146,7 +73,7 @@ const AuthInfo = ({children}) => {
         data.append("location",event.target.location.value)
         data.append("tin",event.target.tin.value)
 
-        axios_ins.post(`users/register/`,data
+        axios.post(`users/register/`,data
         )
         .then(res => {
             console.log(res);
@@ -175,7 +102,7 @@ const AuthInfo = ({children}) => {
         const data = new FormData();
         data.append("refresh",authTokens.refresh)
 
-        axios_ins.post(`users/token/blacklist/`,data)
+        axios.post(`users/token/blacklist/`,data)
         .then(res => {
             console.log(res);
         })

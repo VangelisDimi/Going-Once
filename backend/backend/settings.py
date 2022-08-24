@@ -150,7 +150,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),#Should be at least 2-3 minutes to work correctly with backend
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1),#Should be at least 2-3 minutes to work correctly with backend
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'USER_AUTHENTICATION_RULE': 'utils.authentication.user_authentication_rule',
     'ROTATE_REFRESH_TOKENS': True,

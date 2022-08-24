@@ -1,6 +1,7 @@
 import {useContext} from 'react';
 import { useNavigate,useLocation } from 'react-router-dom';
 import AuthContext from '../auth';
+import AxiosPrivate from '../axios_config';
 
 function SignupButton(){
     const navigate = useNavigate();
@@ -54,6 +55,42 @@ function LogoutButton(){
     );
 }
 
+function RequestButton(){
+    const axios = AxiosPrivate();
+
+    return (
+        <button onClick={request}>
+            Request
+        </button>
+    )
+    
+    function request(){
+        axios.get('/users/get/')
+        .then(res => {
+            console.log(res);
+        })
+        .catch(function (error) {
+            if (error.response) {
+                // The request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+                console.log(error.response.data);
+                console.log(error.response.status);
+                console.log(error.response.headers);
+            } else if (error.request) {
+                // The request was made but no response was received
+                // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+                // http.ClientRequest in node.js
+                console.log(error.request);
+            } else {
+                // Something happened in setting up the request that triggered an Error
+                console.log('Error', error.message);
+            }
+            console.log(error.config);
+        });
+    }
+
+}
+
 function DashBoard(){
     const {authTokens} = useContext(AuthContext);
 
@@ -61,7 +98,10 @@ function DashBoard(){
     if(authTokens)//Logged In
     {
         return(
-            <LogoutButton/>
+            <div>
+                <LogoutButton/>
+                <RequestButton/>
+            </div>
         )
     }
     else //Logged Out
