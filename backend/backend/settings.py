@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'corsheaders',
     #API folders
     'users',
+    'auctions',
 ]
 
 MIDDLEWARE = [

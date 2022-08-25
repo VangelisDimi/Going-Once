@@ -18,6 +18,15 @@ const AxiosPrivate = () => {
 
     axios_private_ins.interceptors.request.use(req => {
         //To-do
+        if(!token)
+        {
+            setToken(localStorage.getItem('token') ? localStorage.getItem('token') : null);
+            if(!token)
+            {
+                //Logout and cancel
+            }
+            req.headers.Authorization = "Token " + token;
+        }
         return req;
     })
 
@@ -26,6 +35,21 @@ const AxiosPrivate = () => {
         return res;
     }, function (error) {
         //To-do
+        storageToken = localStorage.getItem('token') ? localStorage.getItem('token') : null;
+        if(token != storageToken) 
+        {
+            setToken(storageToken);
+            req.headers.Authorization = "Token " + token;
+            //Retry request
+        }
+        else 
+        {
+            if (error.request)
+            {
+                //Logout
+            }
+        }
+        return error;
     })
 
     return axios_private_ins;

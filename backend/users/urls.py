@@ -1,6 +1,6 @@
 # from .views import RegisterAPI
 from django.urls import path
-from .views import UserRegisterView,AdminRegisterView,UserGetPersonalView,LoginView #LoginViews
+from .views import UserRegisterView,AdminRegisterView,UserGetPersonalView,LoginView,UserDeleteView #LoginViews
 from knox import views as knox_views
 
 #API endpoints
@@ -11,4 +11,5 @@ urlpatterns = [
     path('logout/', knox_views.LogoutView.as_view()),
     path('logoutall/', knox_views.LogoutAllView.as_view()),
     path('get/',UserGetPersonalView.as_view()),
+    path('deleteself/',UserDeleteView.as_view()),
 ]
