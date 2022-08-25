@@ -6,11 +6,16 @@ const AuthContext = createContext();
 
 const AuthInfo = ({children}) => {
     const navigate = useNavigate();
-    const [authTokens, setAuthTokens] = useState(() => localStorage.getItem('authTokens') ? JSON.parse(localStorage.getItem('authTokens')) : null);
+    const [refresh, setRefresh] = useState(() => localStorage.getItem('refresh') ? localStorage.getItem('refresh') : null);
+    const [access, setAccess] = useState(null);
+    const [authorized,SetAuthorized] = useState(refresh ? true : false);
 
     const contextData = {
-        authTokens:authTokens,
-        setAuthTokens:setAuthTokens,
+        authorized: authorized,
+        refresh:refresh,
+        setRefresh:setRefresh,
+        access: access,
+        setAccess: setAccess,
         login: login,
         signup: signup,
         logout: logout
@@ -33,8 +38,10 @@ const AuthInfo = ({children}) => {
         axios.post(`users/token/`,data
         )
         .then(res => {
-            setAuthTokens(res.data);
-            localStorage.setItem('authTokens', JSON.stringify(res.data));
+            setRefresh(res.data.refresh);
+            setAccess(res.data.access);
+            localStorage.setItem('refresh', JSON.stringify(res.data.refresh));
+            SetAuthorized(true);
             navigate('/');
 
         })
@@ -100,7 +107,7 @@ const AuthInfo = ({children}) => {
 
     function logout() {
         const data = new FormData();
-        data.append("refresh",authTokens.refresh)
+        data.append("refresh",refresh)
 
         axios.post(`users/token/blacklist/`,data)
         .then(res => {
@@ -125,8 +132,10 @@ const AuthInfo = ({children}) => {
             console.log(error.config);
         });
 
-        setAuthTokens(null);
-        localStorage.removeItem('authTokens');
+        setRefresh(null);
+        setAccess(null);
+        SetAuthorized(false);
+        localStorage.removeItem('refresh');
     };
 }
 

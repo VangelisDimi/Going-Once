@@ -92,10 +92,10 @@ function RequestButton(){
 }
 
 function DashBoard(){
-    const {authTokens} = useContext(AuthContext);
+    const {authorized} = useContext(AuthContext);
 
     const location = useLocation().pathname;
-    if(authTokens)//Logged In
+    if(authorized)//Logged In
     {
         return(
             <div>
