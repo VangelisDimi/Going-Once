@@ -11,6 +11,13 @@ from rest_framework import serializers
 from .models import AppUser
 from utils.permissions import IsAppUser
 
+from rest_framework.authentication import BasicAuthentication
+from knox.views import LoginView as KnoxLoginView
+
+class LoginView(KnoxLoginView):
+    authentication_classes = [BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
 # Create your views here.
 class UserRegisterView(APIView):
     def post(self, request):
@@ -51,4 +58,3 @@ class UserGetPersonalView(APIView):
         user = AppUser.objects.get(pk=request.user.pk)
         serializer = UserSerializer(user)
         return Response(serializer.data)
-    

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 from datetime import timedelta
 from utils.json_read import get_secret
+from rest_framework.settings import api_settings
 
 
 # Quick-start development settings - unsuitable for production
@@ -36,7 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     #Installed
     'rest_framework',
-    'rest_framework_simplejwt.token_blacklist',
+    'knox',
     'corsheaders',
     #API folders
     'users',
@@ -145,14 +146,16 @@ AUTH_USER_MODEL = 'users.BaseUser'
 #Rest settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'knox.auth.TokenAuthentication',
     ],
 }
 
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1),#Should be at least 2-3 minutes to work correctly with backend
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-    'USER_AUTHENTICATION_RULE': 'utils.authentication.user_authentication_rule',
-    'ROTATE_REFRESH_TOKENS': True,
-    'BLACKLIST_AFTER_ROTATION': True,
+REST_KNOX = {
+  'SECURE_HASH_ALGORITHM': 'cryptography.hazmat.primitives.hashes.SHA512',
+  'AUTH_TOKEN_CHARACTER_LENGTH': 64,
+  'TOKEN_TTL': timedelta(hours=24),
+  'USER_SERIALIZER': 'knox.serializers.UserSerializer',
+  'TOKEN_LIMIT_PER_USER': None,
+  'AUTO_REFRESH': True,
+  'EXPIRY_DATETIME_FORMAT': api_settings.DATETIME_FORMAT,
 }

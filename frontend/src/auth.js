@@ -6,16 +6,13 @@ const AuthContext = createContext();
 
 const AuthInfo = ({children}) => {
     const navigate = useNavigate();
-    const [refresh, setRefresh] = useState(() => localStorage.getItem('refresh') ? localStorage.getItem('refresh') : null);
-    const [access, setAccess] = useState(null);
-    const [authorized,SetAuthorized] = useState(refresh ? true : false);
+    const [token, setToken] = useState(() => localStorage.getItem('token') ? localStorage.getItem('token') : null);
+    const [authorized,SetAuthorized] = useState(token ? true : false);
 
     const contextData = {
         authorized: authorized,
-        refresh:refresh,
-        setRefresh:setRefresh,
-        access: access,
-        setAccess: setAccess,
+        token: token,
+        setToken: setToken,
         login: login,
         signup: signup,
         logout: logout
@@ -31,16 +28,15 @@ const AuthInfo = ({children}) => {
     );
 
     function login(event) {
-        const data = new FormData();
-        data.append("username",event.target.username.value)
-        data.append("password",event.target.password.value)
-
-        axios.post(`users/token/`,data
-        )
+        axios.post('/users/login/',{},{ 
+            auth:{
+                "username": event.target.username.value,
+                "password": event.target.password.value,
+            }
+        })
         .then(res => {
-            setRefresh(res.data.refresh);
-            setAccess(res.data.access);
-            localStorage.setItem('refresh', JSON.stringify(res.data.refresh));
+            setToken(res.data.token);
+            localStorage.setItem('token', res.data.token);
             SetAuthorized(true);
             navigate('/');
 
@@ -80,7 +76,7 @@ const AuthInfo = ({children}) => {
         data.append("location",event.target.location.value)
         data.append("tin",event.target.tin.value)
 
-        axios.post(`users/register/`,data
+        axios.post('/users/register/',data
         )
         .then(res => {
             console.log(res);
@@ -106,10 +102,11 @@ const AuthInfo = ({children}) => {
     };
 
     function logout() {
-        const data = new FormData();
-        data.append("refresh",refresh)
-
-        axios.post(`users/token/blacklist/`,data)
+        axios.post('/users/logout/',{},{
+            headers:{
+                "Authorization": `Token ${token}`,
+            }
+        })
         .then(res => {
             console.log(res);
         })
@@ -132,10 +129,9 @@ const AuthInfo = ({children}) => {
             console.log(error.config);
         });
 
-        setRefresh(null);
-        setAccess(null);
+        setToken(null);
         SetAuthorized(false);
-        localStorage.removeItem('refresh');
+        localStorage.removeItem('token');
     };
 }
 
