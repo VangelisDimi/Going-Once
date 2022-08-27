@@ -5,21 +5,21 @@ from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import get_user_model
 
-from .serializers import UserSerializer,AdminSerializer
+from .serializers import UserSerializer
 from django.core import exceptions
 from rest_framework import serializers
 from .models import AppUser
-from utils.permissions import IsAppUser
+from utils.permissions import IsAppUser,IsApproved
 
 from rest_framework.authentication import BasicAuthentication
 from knox.views import LoginView as KnoxLoginView
 
+#Users
 class LoginView(KnoxLoginView):
     authentication_classes = [BasicAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated & IsAppUser & IsApproved]
 
-# Create your views here.
-class UserRegisterView(APIView):
+class RegisterView(APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -35,23 +35,7 @@ class UserRegisterView(APIView):
         serializer.save()
         return Response(status=status.HTTP_201_CREATED)
 
-class AdminRegisterView(APIView):
-    def post(self, request):
-        serializer = AdminSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        errors = dict() 
-        try:
-            validate_password(serializer.validated_data['password'],get_user_model())
-        except exceptions.ValidationError as exception:
-            errors['password'] = list(exception.messages)
-        if errors:
-            raise serializers.ValidationError(errors)
-        
-        serializer.save()
-        return Response(status=status.HTTP_201_CREATED)
-
-class UserGetPersonalView(APIView):
+class GetPersonalView(APIView):
     permission_classes = [IsAuthenticated & IsAppUser]
 
     def get(self,request):
@@ -59,7 +43,7 @@ class UserGetPersonalView(APIView):
         serializer = UserSerializer(user)
         return Response(serializer.data)
 
-class UserDeleteView(APIView):
+class DeleteView(APIView):
     permission_classes = [IsAuthenticated & IsAppUser]
 
     def delete(self,request):

@@ -1,0 +1,55 @@
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth.password_validation import validate_password
+from django.contrib.auth import get_user_model
+
+from .serializers import AdminSerializer
+from django.core import exceptions
+from rest_framework import serializers
+from .models import AppUser, BaseUser
+from utils.permissions import IsAdmin,IsApproved
+
+from rest_framework.authentication import BasicAuthentication
+from knox.views import LoginView as KnoxLoginView
+
+import json
+
+#Admin
+class RegisterView(APIView):
+    def post(self, request):
+        serializer = AdminSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        errors = dict() 
+        try:
+            validate_password(serializer.validated_data['password'],get_user_model())
+        except exceptions.ValidationError as exception:
+            errors['password'] = list(exception.messages)
+        if errors:
+            raise serializers.ValidationError(errors)
+        
+        serializer.save()
+        return Response(status=status.HTTP_201_CREATED)
+
+class LoginView(KnoxLoginView):
+    authentication_classes = [BasicAuthentication]
+    permission_classes = [IsAuthenticated & IsAdmin & IsApproved]
+
+class UsersListView(APIView):
+    permission_classes = [IsAuthenticated & IsAdmin]
+
+    def get(self,request):
+        queryset = AppUser.objects.all().values('username','first_name','last_name','email','is_approved',
+        'phone_number','street_name','street_number','postal_code','country','location','tin')
+        serialiazed_q =  json.dumps(list(queryset))
+        return Response(serialiazed_q)
+
+class AdminsListView(APIView):
+    permission_classes = [IsAuthenticated & IsAdmin]
+
+    def get(self,request):
+        queryset = BaseUser.objects.filter(is_staff = True).values('username','first_name','last_name','email','is_approved','is_superuser')
+        serialiazed_q =  json.dumps(list(queryset))
+        return Response(serialiazed_q)

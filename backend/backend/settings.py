@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'knox',
     'corsheaders',
+    'sslserver',
     #API folders
     'users',
     'auctions',
@@ -52,7 +53,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    #Installed
+    #Added
     'corsheaders.middleware.CorsMiddleware',
 ]
 
@@ -138,7 +139,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #For working with localhost
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
+    'https://localhost:3000',
 ]
 
 #Custom user models
