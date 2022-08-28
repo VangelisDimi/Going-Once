@@ -3,14 +3,14 @@ import AuthContext from './auth'
 import {useContext} from 'react'
 
 const axios_ins = axios.create({
-    baseURL: 'https://localhost:8000/'
+    baseURL: 'http://localhost:8000/'
 });
 
 const AxiosPrivate = () => {
     const {token,setToken} = useContext(AuthContext);
 
     const axios_private_ins = axios.create({
-        baseURL: 'https://localhost:8000/',
+        baseURL: 'http://localhost:8000/',
         headers : {
             Authorization: "Token " + token,
         },

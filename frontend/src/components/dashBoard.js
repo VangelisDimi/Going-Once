@@ -14,7 +14,7 @@ function HomeButton()
 {
     const navigate = useNavigate();
     return(
-        <button onClick={() => navigate("/welcome")}>Logo</button>
+        <button onClick={() => navigate("/")}>Logo</button>
     );
 }
 

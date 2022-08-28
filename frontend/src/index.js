@@ -1,14 +1,19 @@
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Route, Routes, Navigate} from 'react-router-dom';
+import { BrowserRouter, Route, Routes} from 'react-router-dom';
 import './index.css';
+
+import {AuthInfo} from './auth';
+import {SharedComponent,PublicRoute} from './customRoutes'
 
 import Welcome from './pages/welcome';
 import Signup,{SignupSuccess} from './pages/signup';
-import NotFound from './pages/notFound';
-import Admin from './pages/admin';
 import DashBoard from './components/dashBoard';
-import {AuthInfo} from './auth';
-import PrivateRoute  from './privateRoute';
+
+import AdminLogin from './pages/admin/adminLogin';
+import AdminMain from './pages/admin/adminMain';
+import AdminSignup from './pages/admin/adminSignup';
+
+import NotFound from './pages/notFound';
 
 function App()
 {
@@ -20,14 +25,15 @@ function App()
                     {/* User Page */}
                     <Route
                         exact path="/"
-                        element = {<Navigate to="/welcome"/>}
+                        element = {<SharedComponent private_page={null} public_page={<Welcome/>}/>}
                     />
-                    <Route path="/welcome" element={<Welcome />} />
                     <Route path="/signup" element={<Signup />} />
                     <Route path="/signup/success" element={<SignupSuccess/>} />
+
                     {/* Admin Page */}
-                    <Route path="/admin" element={<Admin />} />
-                    <Route path="/admin/signup" element={<Admin />} />
+                    <Route path="/admin" element={<SharedComponent private_page={<AdminMain/>} public_page={<AdminLogin/>}/>} />
+                    <Route path="/admin/signup" element={<PublicRoute children={<AdminSignup/>} redirect='/admin'/>} />
+
                     {/* Various Pages */}
                     <Route path="*" element={<NotFound/>}/>
                 </Routes>

@@ -1,4 +1,4 @@
-import {createContext,useState} from 'react';
+import {useEffect,createContext,useState} from 'react';
 import { useNavigate } from 'react-router-dom';
 import {axios} from './axios_config'
 
@@ -15,6 +15,8 @@ const AuthInfo = ({children}) => {
         setToken: setToken,
         login: login,
         signup: signup,
+        adminLogin: adminLogin,
+        adminSignup: adminSignup,
         logout: logout
     };
 
@@ -27,8 +29,14 @@ const AuthInfo = ({children}) => {
         </AuthContext.Provider>
     );
 
-    function login(event) {
-        axios.post('/users/login/',{},{ 
+    function adminLogin(event){
+        login(event,true);
+    };
+
+    function login(event,admin=false) {
+        let url = '/users/login/';
+        if(admin) url = '/users/admin/login/'
+        axios.post(url,{},{ 
             auth:{
                 "username": event.target.username.value,
                 "password": event.target.password.value,
@@ -38,8 +46,6 @@ const AuthInfo = ({children}) => {
             setToken(res.data.token);
             localStorage.setItem('token', res.data.token);
             SetAuthorized(true);
-            navigate('/');
-
         })
         .catch(function (error) {
             if (error.response) {
@@ -61,22 +67,31 @@ const AuthInfo = ({children}) => {
         });
     };
 
-    function signup(event) {
+    function adminSignup(event) {
+        signup(event,true);
+    }
+
+    function signup(event,admin=false) {
+        let url='/users/register/';
+        if (admin) url='/users/admin/register/';
+
         const data = new FormData();
         data.append("username",event.target.username.value)
         data.append("password",event.target.password.value)
         data.append("first_name",event.target.first_name.value)
         data.append("last_name",event.target.last_name.value)
         data.append("email",event.target.email.value)
-        data.append("phone_number",event.target.phone.value)
-        data.append("street_name",event.target.street_name.value)
-        data.append("street_number",event.target.street_number.value)
-        data.append("postal_code",event.target.postal_code.value)
-        data.append("country",event.target.country.value)
-        data.append("location",event.target.location.value)
-        data.append("tin",event.target.tin.value)
+        if(!admin){
+            data.append("phone_number",event.target.phone.value)
+            data.append("street_name",event.target.street_name.value)
+            data.append("street_number",event.target.street_number.value)
+            data.append("postal_code",event.target.postal_code.value)
+            data.append("country",event.target.country.value)
+            data.append("location",event.target.location.value)
+            data.append("tin",event.target.tin.value)
+        }
 
-        axios.post('/users/register/',data
+        axios.post(url,data
         )
         .then(res => {
             console.log(res);

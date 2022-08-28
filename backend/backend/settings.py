@@ -139,7 +139,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #For working with localhost
 CORS_ALLOWED_ORIGINS = [
-    'https://localhost:3000',
+    'http://localhost:3000',
 ]
 
 #Custom user models

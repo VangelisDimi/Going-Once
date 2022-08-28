@@ -1,6 +1,6 @@
 import {useContext} from 'react';
 import { useNavigate } from 'react-router-dom';
-import AuthContext from '../auth';
+import AuthContext from '../../auth';
 
 function SignupButton(){
     const navigate = useNavigate();
@@ -10,7 +10,7 @@ function SignupButton(){
 }
 
 function LoginField(){
-    const login = useContext(AuthContext);
+    const {adminLogin} = useContext(AuthContext);
 
     return (
         <form onSubmit={handleSubmit}> 
@@ -32,12 +32,12 @@ function LoginField(){
 
     function handleSubmit(event){
         event.preventDefault();
-        login(event);
+        adminLogin(event);
     };
 }
 
 
-function Admin(){
+function AdminLogin(){
     return (
         <div>
             Admin page
@@ -47,4 +47,4 @@ function Admin(){
     );
 }
 
-export default Admin;
+export default AdminLogin;
