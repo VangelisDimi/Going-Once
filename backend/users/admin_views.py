@@ -1,3 +1,4 @@
+from cmath import inf
 from collections import UserList
 from dataclasses import field
 from rest_framework.views import APIView
@@ -45,6 +46,7 @@ class UsersListView(APIView):
     def get(self,request):
         queryset = AppUser.objects.all().values('pk','username','first_name','last_name','email','is_approved',
         'phone_number','street_name','street_number','postal_code','country','location','tin')
+
         serialiazed_q =  json.dumps(list(queryset))
         return Response(serialiazed_q)
 
