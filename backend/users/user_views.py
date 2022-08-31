@@ -5,11 +5,11 @@ from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import get_user_model
 
-from .serializers import UserSerializer
+from .serializers import AdminSerializer, UserSerializer
 from django.core import exceptions
 from rest_framework import serializers
-from .models import AppUser
-from utils.permissions import IsAppUser,IsApproved
+from .models import AppUser, BaseUser
+from utils.permissions import IsAdmin,IsAppUser,IsApproved
 
 from rest_framework.authentication import BasicAuthentication
 from knox.views import LoginView as KnoxLoginView
@@ -35,10 +35,15 @@ class RegisterView(APIView):
         serializer.save()
         return Response(status=status.HTTP_201_CREATED)
 
-class GetPersonalView(APIView):
-    permission_classes = [IsAuthenticated & IsAppUser]
+class PersonalUserInfoView(APIView):
+    permission_classes = [IsAuthenticated & (IsAppUser | IsAdmin)]
 
     def get(self,request):
+        base_user = BaseUser.objects.get(pk=request.user.pk)
+        if base_user.is_staff:
+            base_serializer = AdminSerializer(base_user)
+            return Response(base_serializer.data)
+
         user = AppUser.objects.get(pk=request.user.pk)
         serializer = UserSerializer(user)
         return Response(serializer.data)

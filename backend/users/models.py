@@ -1,5 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser,PermissionsMixin
+from django.contrib.auth.models import AbstractUser
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 #Models
 class BaseUser(AbstractUser):
@@ -28,3 +29,29 @@ class AppUser(BaseUser):
     country = models.CharField(max_length=50,blank=False)
     location = models.CharField(max_length=50,blank=False)
     tin = models.CharField(max_length=50,blank=False)
+
+class seller_rating(models.Model):
+    rating_from = models.ForeignKey(AppUser, related_name='seller_rating_from', on_delete=models.CASCADE,blank=False)
+    rating_to = models.ForeignKey(AppUser, related_name='seller_rating_to', on_delete=models.CASCADE,blank=False)
+    rating = models.IntegerField(validators=[
+            MaxValueValidator(10),
+            MinValueValidator(0)
+        ], blank=False)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["seller_rating_from", "seller_rating_to"], name="unique_keys_seller_rating")
+    ]
+
+class bider_rating(models.Model):
+    rating_from = models.ForeignKey(AppUser, related_name='bider_rating_from', on_delete=models.CASCADE,blank=False)
+    rating_to = models.ForeignKey(AppUser, related_name='bider_rating_to', on_delete=models.CASCADE,blank=False)
+    rating = models.IntegerField(validators=[
+            MaxValueValidator(100),
+            MinValueValidator(1)
+        ], blank=False)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["bider_rating_from", "bider_rating_to"], name="unique_keys_bider_rating")
+    ]

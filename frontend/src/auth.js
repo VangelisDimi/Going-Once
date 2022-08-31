@@ -8,6 +8,9 @@ const AuthInfo = ({children}) => {
     const navigate = useNavigate();
     const [token, setToken] = useState(() => localStorage.getItem('token') ? localStorage.getItem('token') : null);
     const [authorized,SetAuthorized] = useState(token ? true : false);
+    const [info,setInfo] = useState([]);
+    const [isApproved,setIsApproved] = useState(false);
+    const [isAdmin,setIsAdmin] = useState(false);
 
     const contextData = {
         authorized: authorized,
@@ -20,8 +23,11 @@ const AuthInfo = ({children}) => {
         logout: logout
     };
 
-    // useEffect(() => {
-    // });
+    useEffect(() => {
+        if(token){
+            
+        }
+    },[token]);
 
     return(
         <AuthContext.Provider value={contextData}>

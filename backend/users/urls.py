@@ -12,7 +12,7 @@ urlpatterns = [
     #User
     path('register/', user_views.RegisterView.as_view()), #Register user
     path('login/',user_views.LoginView.as_view()),
-    path('get/',user_views.GetPersonalView.as_view()),
+    path('get/',user_views.PersonalUserInfoView.as_view()),
     path('deleteself/',user_views.DeleteView.as_view()),
     #Admin
     path('admin/register/', admin_views.RegisterView.as_view()), #Register admin
