@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 
+#null=False
+
 #Models
 class BaseUser(AbstractUser):
     class Meta:
@@ -30,28 +32,28 @@ class AppUser(BaseUser):
     location = models.CharField(max_length=50,blank=False)
     tin = models.CharField(max_length=50,blank=False)
 
-class seller_rating(models.Model):
-    rating_from = models.ForeignKey(AppUser, related_name='seller_rating_from', on_delete=models.CASCADE,blank=False)
-    rating_to = models.ForeignKey(AppUser, related_name='seller_rating_to', on_delete=models.CASCADE,blank=False)
-    rating = models.IntegerField(validators=[
-            MaxValueValidator(10),
-            MinValueValidator(0)
-        ], blank=False)
+# class SellerRating(models.Model):
+#     rating_from = models.ForeignKey(AppUser, related_name='seller_ratings_from', on_delete=models.CASCADE,blank=False)
+#     rating_to = models.ForeignKey(AppUser, related_name='seller_ratings_to', on_delete=models.CASCADE,blank=False)
+#     rating = models.IntegerField(validators=[
+#             MaxValueValidator(10),
+#             MinValueValidator(0)
+#         ], blank=False)
 
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=["seller_rating_from", "seller_rating_to"], name="unique_keys_seller_rating")
-    ]
+#     class Meta:
+#         constraints = [
+#             models.UniqueConstraint(fields=["rating_from", "rating_to"], name="unique_keys_seller_rating")
+#     ]
 
-class bider_rating(models.Model):
-    rating_from = models.ForeignKey(AppUser, related_name='bider_rating_from', on_delete=models.CASCADE,blank=False)
-    rating_to = models.ForeignKey(AppUser, related_name='bider_rating_to', on_delete=models.CASCADE,blank=False)
-    rating = models.IntegerField(validators=[
-            MaxValueValidator(100),
-            MinValueValidator(1)
-        ], blank=False)
+# class BiderRating(models.Model):
+#     rating_from = models.ForeignKey(AppUser, related_name='bider_ratings_from', on_delete=models.CASCADE,blank=False)
+#     rating_to = models.ForeignKey(AppUser, related_name='bider_ratings_to', on_delete=models.CASCADE,blank=False)
+#     rating = models.IntegerField(validators=[
+#             MaxValueValidator(100),
+#             MinValueValidator(1)
+#         ], blank=False)
 
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=["bider_rating_from", "bider_rating_to"], name="unique_keys_bider_rating")
-    ]
+#     class Meta:
+#         constraints = [
+#             models.UniqueConstraint(fields=["rating_from", "rating_to"], name="unique_keys_bider_rating")
+#     ]

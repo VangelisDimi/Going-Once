@@ -12,6 +12,7 @@ import DashBoard from './components/dashBoard';
 import AdminLogin from './pages/admin/adminLogin';
 import AdminMain from './pages/admin/adminMain';
 import AdminSignup from './pages/admin/adminSignup';
+import AuctionManage from './pages/auctionManage';
 
 import NotFound from './pages/notFound';
 
@@ -29,6 +30,7 @@ function App()
                     />
                     <Route path="/signup" element={<Signup />} />
                     <Route path="/signup/success" element={<SignupSuccess/>} />
+                    <Route path="/manage" element={<AuctionManage/>} />
 
                     {/* Admin Page */}
                     <Route path="/admin" element={<SharedComponent private_page={<AdminMain/>} public_page={<AdminLogin/>}/>} />
