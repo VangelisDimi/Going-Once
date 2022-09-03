@@ -13,10 +13,5 @@ class CreateAuctionView(APIView):
     def post(self, request):
         serializer = AuctionSerializer(data=request.data,context = {'request':request})
         serializer.is_valid(raise_exception=True)
-
-        # errors = dict() 
-        # if errors:
-        #     raise serializers.ValidationError(errors)
-        
-        # serializer.save()
+        serializer.save()
         return Response(status=status.HTTP_201_CREATED)
