@@ -1,5 +1,4 @@
-from re import T
-from unicodedata import category
+import os
 from django.db import models
 from users.models import AppUser
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -10,20 +9,20 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 class Category(models.Model):
     class Meta:
         verbose_name_plural = "categories"
-
     def __str__(self):
         return self.name
 
     name = models.CharField(max_length=150,blank=False,unique=True)
 
 class Auction(models.Model):
-    #pk = id
     def __str__(self):
         return self.name + " (" + str(self.pk) + ")"
-
     def set_seller(self,seller_id):
         self.seller=AppUser.objects.get(pk=seller_id)
+    def get_current_bid(self):
+        return "example"
 
+    #pk = id
     name = models.CharField(max_length=150,blank=False)
     category = models.ManyToManyField(Category,blank=False)
     first_bid = models.DecimalField(max_digits=7, decimal_places=2,blank=False)#in dollars
@@ -44,6 +43,14 @@ class Auction(models.Model):
     description = models.CharField(max_length=500,blank=True)
 
     seller =  models.ForeignKey(AppUser, related_name='auctions', on_delete=models.CASCADE,blank=False)
+
+class AuctionImage(models.Model):
+    def __str__(self):
+        return os.path.basename(self.image.name) + " (" + str(self.auction.pk) + ")" 
+
+    auction = models.ForeignKey(Auction, related_name='images', on_delete=models.CASCADE,blank=False)
+    image = models.ImageField(upload_to='media/auction_images' ,blank=False)
+    # order = models.IntegerField(blank=False,default=1,validators=[MinValueValidator(1)])
 
 class Bid(models.Model):
     #pk = id

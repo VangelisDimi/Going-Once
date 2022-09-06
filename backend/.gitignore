@@ -1,4 +1,5 @@
 secrets.json
+media/
 
 #Django ignore
 *.egg-info

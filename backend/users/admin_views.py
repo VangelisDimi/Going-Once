@@ -17,8 +17,6 @@ from utils.permissions import IsAdmin,IsApproved
 from rest_framework.authentication import BasicAuthentication
 from knox.views import LoginView as KnoxLoginView
 
-import json
-
 #Admin
 class RegisterView(APIView):
     def post(self, request):
@@ -47,13 +45,11 @@ class UsersListView(APIView):
         queryset = AppUser.objects.all().values('pk','username','first_name','last_name','email','is_approved',
         'phone_number','street_name','street_number','postal_code','country','location','tin')
 
-        serialiazed_q =  json.dumps(list(queryset))
-        return Response(serialiazed_q)
+        return Response(queryset)
 
 class AdminsListView(APIView):
     permission_classes = [IsAuthenticated & IsAdmin]
 
     def get(self,request):
         queryset = BaseUser.objects.filter(is_staff = True).values('pk','username','first_name','last_name','email','is_approved','is_superuser')
-        serialiazed_q =  json.dumps(list(queryset))
-        return Response(serialiazed_q)
+        return Response(queryset)

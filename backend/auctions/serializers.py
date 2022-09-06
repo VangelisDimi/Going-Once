@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Auction,Category
+from .models import Auction,AuctionImage,Category
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -7,21 +7,25 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ('name')
 
 class AuctionSerializer(serializers.ModelSerializer):
-    # category = CategorySerializer(many=True)
     category = serializers.ListField(write_only=True)
+    image = serializers.ListField(write_only=True,required=False)
 
     class Meta:
         model = Auction
 
         fields = ('name','first_bid','location','latitude','longitude','country',
-        'started','ends','description','category')
+        'started','ends','description','category','image')
 
     def create(self, validated_data):
         categories = validated_data.pop('category', [])
+        images = validated_data.pop('image',[])
+        print(images)
         instance = self.Meta.model(**validated_data)
         instance.set_seller(self.context['request'].user.pk)
         instance.save()
         for category in categories:
             category_instance, created = Category.objects.get_or_create(name=category)
             instance.category.add(category_instance)
+        for img in images:
+            image_instance = AuctionImage.objects.create(auction=instance,image=img)
         return instance

@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'knox',
     'corsheaders',
     'sslserver',
+    'rest_framework_xml',
     #API folders
     'users',
     'auctions',
@@ -150,6 +151,12 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'knox.auth.TokenAuthentication',
     ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.FormParser',
+    ]
 }
 
 REST_KNOX = {

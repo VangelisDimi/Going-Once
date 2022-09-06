@@ -18,7 +18,7 @@ function UserList() {
     useEffect(() => {
         axios.get('/users/admin/getuserslist/')
         .then(res => {
-            setData(JSON.parse(res.data));
+            setData(JSON.parse(JSON.stringify(res.data)));
         });
     },[]); 
 
@@ -66,7 +66,7 @@ function UserList() {
     function refreshData() {
         axios.get('/users/admin/getuserslist/')
         .then(res => {
-            setData(JSON.parse(res.data));
+            setData(JSON.parse(JSON.stringify(res.data)));
         });
     }
 
@@ -99,9 +99,34 @@ function UserList() {
     }
 }
 
+function AuctionList(){
+    function createXML(){
+        // const xmlStr = '<q id="a"><span id="b">hey!</span></q>';
+        // const parser = new DOMParser();
+        // const doc = parser.parseFromString(xmlStr, "application/xml");
+        // // print the name of the root element or error message
+        // const errorNode = doc.querySelector("parsererror");
+        // if (errorNode) {
+        // console.log("error while parsing");
+        // } else {
+        // console.log(doc.documentElement.nodeName);
+        // }
+
+        // let blob = new Blob(['<q id="a"><span id="b">hey!</span></q>'], {type: 'text/xml'});
+        // let url = URL.createObjectURL(blob);
+        // window.open(url);
+        // URL.revokeObjectURL(url);
+    }
+
+    return(
+        <button onClick={createXML}>Create</button>
+    )
+}
+
 function AdminMain() {
 
     return(
+        <>
         <Tabs
             defaultActiveKey="users"
         >
@@ -112,6 +137,8 @@ function AdminMain() {
                 <AdminList />
             </Tab>
         </Tabs>
+        <AuctionList/>
+        </>
     );
 }
 
