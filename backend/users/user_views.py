@@ -17,7 +17,7 @@ from knox.views import LoginView as KnoxLoginView
 #Users
 class LoginView(KnoxLoginView):
     authentication_classes = [BasicAuthentication]
-    permission_classes = [IsAuthenticated & IsAppUser & IsApproved]
+    permission_classes = [IsAuthenticated & IsAppUser]
 
 class RegisterView(APIView):
     def post(self, request):
@@ -36,7 +36,7 @@ class RegisterView(APIView):
         return Response(status=status.HTTP_201_CREATED)
 
 class PersonalUserInfoView(APIView):
-    permission_classes = [IsAuthenticated & (IsAppUser | IsAdmin)]
+    permission_classes = [IsAuthenticated & (IsAppUser | IsAdmin) & IsApproved]
 
     def get(self,request):
         base_user = BaseUser.objects.get(pk=request.user.pk)
@@ -49,7 +49,7 @@ class PersonalUserInfoView(APIView):
         return Response(serializer.data)
 
 class DeleteView(APIView):
-    permission_classes = [IsAuthenticated & IsAppUser]
+    permission_classes = [IsAuthenticated & IsAppUser & IsApproved]
 
     def delete(self,request):
         user = AppUser.objects.get(pk=request.user.pk)

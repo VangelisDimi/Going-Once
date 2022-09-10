@@ -36,10 +36,10 @@ class RegisterView(APIView):
 
 class LoginView(KnoxLoginView):
     authentication_classes = [BasicAuthentication]
-    permission_classes = [IsAuthenticated & IsAdmin & IsApproved]
+    permission_classes = [IsAuthenticated & IsAdmin]
 
 class UsersListView(APIView):
-    permission_classes = [IsAuthenticated & IsAdmin]
+    permission_classes = [IsAuthenticated & IsAdmin & IsApproved]
 
     def get(self,request):
         queryset = AppUser.objects.all().values('pk','username','first_name','last_name','email','is_approved',
@@ -48,7 +48,7 @@ class UsersListView(APIView):
         return Response(queryset)
 
 class AdminsListView(APIView):
-    permission_classes = [IsAuthenticated & IsAdmin]
+    permission_classes = [IsAuthenticated & IsAdmin & IsApproved]
 
     def get(self,request):
         queryset = BaseUser.objects.filter(is_staff = True).values('pk','username','first_name','last_name','email','is_approved','is_superuser')

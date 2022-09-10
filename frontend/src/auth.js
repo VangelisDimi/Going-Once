@@ -1,20 +1,20 @@
 import {useEffect,createContext,useState} from 'react';
 import { useNavigate } from 'react-router-dom';
-import {axios} from './axios_config'
+import  {axios} from './axios_config'
 
 const AuthContext = createContext();
 
 const AuthInfo = ({children}) => {
     const navigate = useNavigate();
     const [token, setToken] = useState(() => localStorage.getItem('token') ? localStorage.getItem('token') : null);
-    const [authorized,SetAuthorized] = useState(token ? true : false);
-    const [info,setInfo] = useState([]);
-    const [isApproved,setIsApproved] = useState(false);
-    const [isAdmin,setIsAdmin] = useState(false);
+    const [authorized,setAuthorized] = useState(token ? true : false);
+    const [userInfo,setUserInfo] = useState([]);
+    const [loading,setLoading] = useState(true);
 
     const contextData = {
         authorized: authorized,
         token: token,
+        userInfo: userInfo,
         setToken: setToken,
         login: login,
         signup: signup,
@@ -24,14 +24,26 @@ const AuthInfo = ({children}) => {
     };
 
     useEffect(() => {
+        setLoading(true);
+        const axios_priv = axios.create({
+            baseURL: 'http://localhost:8000/',
+            headers : {
+                Authorization: "Token " + token,
+            },
+        });
+
         if(token){
-            
+            axios_priv.get('users/get/')
+            .then(res => {
+                setUserInfo(JSON.parse(JSON.stringify(res.data)));
+            });
         }
+        setLoading(false);
     },[token]);
 
     return(
         <AuthContext.Provider value={contextData}>
-            {children}
+            {!loading ? children : null}
         </AuthContext.Provider>
     );
 
@@ -51,7 +63,7 @@ const AuthInfo = ({children}) => {
         .then(res => {
             setToken(res.data.token);
             localStorage.setItem('token', res.data.token);
-            SetAuthorized(true);
+            setAuthorized(true);
         })
         .catch(function (error) {
             if (error.response) {
@@ -151,7 +163,7 @@ const AuthInfo = ({children}) => {
         });
 
         setToken(null);
-        SetAuthorized(false);
+        setAuthorized(false);
         localStorage.removeItem('token');
     };
 }

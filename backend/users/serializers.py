@@ -7,9 +7,11 @@ class UserSerializer(serializers.ModelSerializer):
         model = AppUser
 
         fields = ('username','first_name','last_name','email','password','is_staff',
-        'phone_number','street_name','street_number','postal_code','country','location','tin')
-        extra_kwargs = {'password': {'write_only': True},'is_staff':{'read_only': True}}
-        
+        'phone_number','street_name','street_number','postal_code','country','location','tin','is_approved')
+        extra_kwargs = {'password': {'write_only': True},
+            'is_staff':{'read_only': True},
+            'is_approved':{'read_only': True}
+        }    
     
     def create(self, validated_data):
         password = validated_data.pop('password', None)
@@ -43,8 +45,11 @@ class AdminSerializer(serializers.ModelSerializer):
         model = BaseUser
 
         fields = ('username','first_name','last_name','email','password','is_staff',
-        )
-        extra_kwargs = {'password':{'write_only': True},'is_staff':{'read_only': True}}
+        'is_approved')
+        extra_kwargs = {'password':{'write_only': True},
+            'is_staff':{'read_only': True},
+            'is_approved':{'read_only': True}
+        }
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)
@@ -72,8 +77,7 @@ class AdminSerializer(serializers.ModelSerializer):
 class SuperAdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = BaseUser
-        fields = ('username','password',
-        )
+        fields = ('username','password')
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):

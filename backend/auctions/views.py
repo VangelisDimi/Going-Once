@@ -6,11 +6,11 @@ import lxml.etree as ET
 from utils.renderers import CustomJSONRenderer,CustomXMLRenderer
 
 from .serializers import AuctionSerializer
-from utils.permissions import IsAdmin, IsAppUser
+from utils.permissions import IsAdmin, IsAppUser, IsApproved
 from .models import Auction, Bid
 
 class CreateAuctionView(APIView):
-    permission_classes = [IsAuthenticated & IsAppUser]
+    permission_classes = [IsAuthenticated & IsAppUser & IsApproved]
 
     def post(self, request):
         serializer = AuctionSerializer(data=request.data,context = {'request':request})
@@ -20,7 +20,7 @@ class CreateAuctionView(APIView):
 
 class ExportXMLView(APIView):
     renderer_classes = (CustomXMLRenderer,)
-    permission_classes = [IsAuthenticated & IsAdmin]
+    permission_classes = [IsAuthenticated & IsAdmin & IsApproved]
     
     def get(self,request):
         root = ET.Element("Item", ItemID="1")
@@ -33,7 +33,7 @@ class ExportXMLView(APIView):
 
 class ExportJSONView(APIView):
     renderer_classes = (CustomJSONRenderer,)
-    permission_classes = [IsAuthenticated & IsAdmin]
+    permission_classes = [IsAuthenticated & IsAdmin & IsApproved]
 
     def get(self,request):
         data = {}

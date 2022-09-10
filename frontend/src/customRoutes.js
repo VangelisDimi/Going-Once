@@ -1,5 +1,6 @@
 import { Navigate } from 'react-router-dom'
 import { useContext } from 'react'
+import {NoPermission} from './pages/errors'
 import AuthContext from './auth'
 
 const SharedComponent = ({private_page,public_page}) => {
@@ -18,4 +19,12 @@ const PublicRoute = ({children,redirect="/"}) => {
     )
 }
 
-export {SharedComponent,PublicRoute};
+const AdminRoute = ({children}) => {
+    const {userInfo} = useContext(AuthContext);
+
+    return(
+        userInfo.is_staff ? children : <NoPermission/>
+    )
+} 
+
+export {SharedComponent,PublicRoute,AdminRoute};

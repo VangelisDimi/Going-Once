@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'knox',
     'corsheaders',
     'sslserver',
-    'rest_framework_xml',
     #API folders
     'users',
     'auctions',

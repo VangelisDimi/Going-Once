@@ -27,5 +27,5 @@ class AuctionSerializer(serializers.ModelSerializer):
             category_instance, created = Category.objects.get_or_create(name=category)
             instance.category.add(category_instance)
         for img in images:
-            image_instance = AuctionImage.objects.create(auction=instance,image=img)
+            AuctionImage.objects.create(auction=instance,image=img)
         return instance

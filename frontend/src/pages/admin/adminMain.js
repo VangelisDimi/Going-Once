@@ -1,7 +1,6 @@
 import {useState,useEffect} from 'react';
 import AxiosPrivate from "../../axios_config"
 
-// import 'bootstrap/dist/css/bootstrap.min.css';
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 

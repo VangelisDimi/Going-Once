@@ -1,4 +1,4 @@
-import { useEffect,useContext  } from 'react';
+import { useContext,useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthContext from '../auth';
 
@@ -8,7 +8,7 @@ function SignupSuccess(){
     // Redirect to welcome page after some time
     useEffect(() => {
         setTimeout(() => {
-            navigate('/welcome');
+            navigate('/');
         }, 5000)
     });
 
@@ -19,8 +19,7 @@ function SignupSuccess(){
     );
 }
 
-function SignupForm(){
-    const navigate = useNavigate();
+function SignupForm({setSuccess}){
     const {signup} = useContext(AuthContext);
 
     return(
@@ -99,17 +98,20 @@ function SignupForm(){
     function HandleSubmit(event){
         event.preventDefault();
         signup(event);
-        navigate('/signup/success');
+        setSuccess(true);
     };
 }
 
 function Signup(){
+    const [success,setSuccess] = useState(false);
+
+    if(success) return <SignupSuccess/>
+
     return(
         <div>
-            <SignupForm/>
+            <SignupForm setSuccess={setSuccess}/>
         </div>
     );
 }
 
 export default Signup
-export {SignupSuccess};
