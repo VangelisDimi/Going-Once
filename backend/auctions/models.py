@@ -47,10 +47,15 @@ class Auction(models.Model):
 class AuctionImage(models.Model):
     def __str__(self):
         return os.path.basename(self.image.name) + " (" + str(self.auction.pk) + ")" 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["order", "auction"], name="unique_image_order")
+    ]
 
     auction = models.ForeignKey(Auction, related_name='images', on_delete=models.CASCADE,blank=False)
     image = models.ImageField(upload_to='media/auction_images' ,blank=False)
-    # order = models.IntegerField(blank=False,default=1,validators=[MinValueValidator(1)])
+    order = models.IntegerField(blank=False,default=1,validators=[MinValueValidator(1)])
+
 
 class Bid(models.Model):
     #pk = id

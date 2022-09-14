@@ -1,9 +1,10 @@
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Route, Routes} from 'react-router-dom';
-import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
 
 import {AuthInfo} from './auth';
+import {RequestInfo} from './requests';
 import {SharedComponent,PublicRoute,AdminRoute} from './customRoutes'
 
 import Welcome from './pages/welcome';
@@ -11,7 +12,7 @@ import Signup from './pages/signup';
 import DashBoard from './components/dashBoard';
 import Main from './pages/main';
 import AuctionManage from './pages/auctionManage';
-import CreateAuctionForm from './pages/auctionCreate'
+import CreateAuction from './pages/auctionCreate'
 
 import AdminLogin from './pages/admin/adminLogin';
 import AdminMain from './pages/admin/adminMain';
@@ -23,7 +24,7 @@ function App()
 {
     return (
         <BrowserRouter>
-            <AuthInfo>
+            <AuthInfo><RequestInfo>
                 <DashBoard/>
                 <Routes>
                     {/* User Page */}
@@ -33,7 +34,7 @@ function App()
                     />
                     <Route path="/signup" element={<Signup />} />
                     <Route path="/manage" element={<AuctionManage/>} />
-                    <Route path="/manage/create" element={<CreateAuctionForm/>} />
+                    <Route path="/manage/create" element={<CreateAuction/>} />
 
                     {/* Admin Page */}
                     <Route path="/admin" element=
@@ -47,7 +48,7 @@ function App()
                     {/* Various Pages */}
                     <Route path="*" element={<NotFound/>}/>
                 </Routes>
-            </AuthInfo>
+            </RequestInfo></AuthInfo>
         </BrowserRouter>
     );
 }

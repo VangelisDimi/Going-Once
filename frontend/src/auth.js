@@ -1,11 +1,9 @@
 import {useEffect,createContext,useState} from 'react';
-import { useNavigate } from 'react-router-dom';
 import  {axios} from './axios_config'
 
 const AuthContext = createContext();
 
 const AuthInfo = ({children}) => {
-    const navigate = useNavigate();
     const [token, setToken] = useState(() => localStorage.getItem('token') ? localStorage.getItem('token') : null);
     const [authorized,setAuthorized] = useState(token ? true : false);
     const [userInfo,setUserInfo] = useState([]);
@@ -26,7 +24,6 @@ const AuthInfo = ({children}) => {
     useEffect(() => {
         setLoading(true);
         const axios_priv = axios.create({
-            baseURL: 'http://localhost:8000/',
             headers : {
                 Authorization: "Token " + token,
             },
@@ -114,24 +111,6 @@ const AuthInfo = ({children}) => {
         .then(res => {
             console.log(res);
         })
-        .catch(function (error) {
-            if (error.response) {
-            // The request was made and the server responded with a status code
-            // that falls out of the range of 2xx
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
-            } else if (error.request) {
-            // The request was made but no response was received
-            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-            // http.ClientRequest in node.js
-            console.log(error.request);
-            } else {
-            // Something happened in setting up the request that triggered an Error
-            console.log('Error', error.message);
-            }
-            console.log(error.config);
-        });
     };
 
     function logout() {

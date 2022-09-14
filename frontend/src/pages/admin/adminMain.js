@@ -1,21 +1,21 @@
-import {useState,useEffect} from 'react';
-import AxiosPrivate from "../../axios_config"
+import {useState,useEffect,useContext} from 'react';
+import RequestContext from '../../requests'
 
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 
 function AdminList() {
     return(
-        "aasasaas"
+        null
     );
 }
 
 function UserList() {
-    const axios = AxiosPrivate();
     const [data,setData] = useState([]);
+    const {getUserList} = useContext(RequestContext);
 
     useEffect(() => {
-        axios.get('/users/admin/getuserslist/')
+        getUserList()
         .then(res => {
             setData(JSON.parse(JSON.stringify(res.data)));
         });
@@ -40,7 +40,7 @@ function UserList() {
     );
 
     return (
-        <table>
+        <table class="table">
             <thead>
                 <tr>
                 <th scope="col">Id</th>
@@ -54,6 +54,7 @@ function UserList() {
                 <th scope="col">Location</th>
                 <th scope="col">TIN</th>
                 <th scope="col">Status</th>
+                <th scope="col"></th>
                 </tr>
             </thead>
             <tbody>
@@ -63,7 +64,7 @@ function UserList() {
     );
 
     function refreshData() {
-        axios.get('/users/admin/getuserslist/')
+        getUserList()
         .then(res => {
             setData(JSON.parse(JSON.stringify(res.data)));
         });
@@ -81,8 +82,8 @@ function UserList() {
         const[id,setId] = useState(user_id); 
 
         return(
-            <button onClick={() => approveUser(user_id)}>
-                Approve
+            <button class="btn btn-success" onClick={() => approveUser(user_id)}>
+                <i class="bi bi-check"></i> Approve
             </button>
         );
     }
@@ -91,35 +92,11 @@ function UserList() {
         const[id,setId] = useState(user_id); 
 
         return(
-            <button onClick={() => rejectUser(user_id)}>
-                Reject
+            <button class="btn btn-danger" onClick={() => rejectUser(user_id)}>
+                <i class="bi bi-x"></i> Reject
             </button>
         );
     }
-}
-
-function AuctionList(){
-    function createXML(){
-        // const xmlStr = '<q id="a"><span id="b">hey!</span></q>';
-        // const parser = new DOMParser();
-        // const doc = parser.parseFromString(xmlStr, "application/xml");
-        // // print the name of the root element or error message
-        // const errorNode = doc.querySelector("parsererror");
-        // if (errorNode) {
-        // console.log("error while parsing");
-        // } else {
-        // console.log(doc.documentElement.nodeName);
-        // }
-
-        // let blob = new Blob(['<q id="a"><span id="b">hey!</span></q>'], {type: 'text/xml'});
-        // let url = URL.createObjectURL(blob);
-        // window.open(url);
-        // URL.revokeObjectURL(url);
-    }
-
-    return(
-        <button onClick={createXML}>Create</button>
-    )
 }
 
 function AdminMain() {
@@ -136,7 +113,6 @@ function AdminMain() {
                 <AdminList />
             </Tab>
         </Tabs>
-        <AuctionList/>
         </>
     );
 }
