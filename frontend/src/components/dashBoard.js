@@ -2,15 +2,27 @@ import {useContext} from 'react';
 import { useNavigate,useLocation,NavLink } from 'react-router-dom';
 import AuthContext from '../auth';
 
+
+function LoginDropDown(){
+    
+}
+
 function SignupButton(){
+    const location = useLocation().pathname;
     const navigate = useNavigate();
+
+    if (location.startsWith("/admin")) return null;
+
     return(
         <button className="btn btn-outline-secondary" type="button" onClick={() => navigate("/signup")}>Signup</button>
     );
 }
 
 function LoginField(){
+    const location = useLocation().pathname;
     const {login} = useContext(AuthContext);
+
+    if (location.startsWith("/admin")) return null;
 
     return (
         <form className='form-inline' onSubmit={handleSubmit}>
@@ -38,7 +50,7 @@ function LogoutButton(){
     const {logout} = useContext(AuthContext);
 
     return (
-        <button type="button" className="btn btn-outline-danger" onClick={logout}>
+        <button type="button" className="dropdown-item" onClick={logout}>
             Logout
         </button>
     );
@@ -46,7 +58,24 @@ function LogoutButton(){
 
 function NavbarItems(){
     const location = useLocation().pathname;
+    const {authorized,userInfo} = useContext(AuthContext);
 
+    //Admin Navbar
+    if (location.startsWith("/admin")){
+        if(!userInfo.is_staff) return null;
+
+        return(
+            <ul className="navbar-nav">
+                <li className="nav-item">
+                    <NavLink to='/admin/usermanage' className={"nav-link" + (location.startsWith("/admin/usermanage")? " active" : "")}>
+                            Manage Users
+                    </NavLink>
+                </li>
+            </ul>
+        );
+    }
+
+    //Normal navbar
     return(
         <ul className="navbar-nav">
             <li className="nav-item">
@@ -54,11 +83,15 @@ function NavbarItems(){
                             Navigate
                 </NavLink>
             </li>
-            <li className="nav-item">
-                <NavLink to='/manage' className={"nav-link" + (location.startsWith("/manage") ? " active" : "")}>
-                        Manage
-                </NavLink>
-            </li>
+            {authorized && !userInfo.is_staff ?
+                <li className="nav-item">
+                    <NavLink to='/manage' className={"nav-link" + (location.startsWith("/manage") ? " active" : "")}>
+                            Manage
+                    </NavLink>
+                </li>
+                :
+                null
+            }
         </ul>
     );
 }
@@ -75,21 +108,38 @@ function NavBarLogo(){
     return <NavLink className="navbar-brand" to='/'>Logo</NavLink>
 }
 
+function UserDropDown(){
+    const {userInfo} = useContext(AuthContext);
+
+    return(
+        <ul className="navbar-nav">
+            <li className="nav-item dropdown">
+            <a className="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                {userInfo.username}
+                    &thinsp;
+                {userInfo.is_staff ? <span className="badge bg-secondary">Admin</span> : null}
+            </a>
+            <ul className="dropdown-menu" aria-labelledby="navbarDarkDropdownMenuLink">
+                <li><hr className="dropdown-divider"/></li>
+                <LogoutButton/>
+            </ul>
+            </li>
+        </ul>
+    )
+}
+
 function DashBoard(){
     const {authorized,userInfo} = useContext(AuthContext);
     const location = useLocation().pathname;
 
-    if(!authorized && location.startsWith("/admin")) return null;
+    if(location.startsWith("/admin") && authorized && !userInfo.is_staff) return null;
 
     return(
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <NavBarLogo/>
-            {authorized && !location.startsWith("/admin") ?
-                <NavbarItems/>
-                : null
-            }
+            <NavbarItems/>
+            {authorized ? <UserDropDown/> : null}
             {!authorized ? <LoginField/> : null}
-            {authorized ? <LogoutButton/> : null}
             {!authorized && !(location==="/signup") ? <SignupButton/> : null}
         </nav>
     );

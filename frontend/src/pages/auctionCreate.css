@@ -5,7 +5,7 @@
   
 /*for the animation*/
 .dropdown-toggle:after {
-    transition: 0.5s;
+    transition: 0.15s;
 }
 
 /*https://stackoverflow.com/questions/3790935/can-i-hide-the-html5-number-input-s-spin-box*/
@@ -19,13 +19,3 @@
 .no-spinbox {
     -moz-appearance:textfield; /* Firefox */
 }
-
-.btn-close-sm {
-    box-sizing: content-box;
-    width: 1em;
-    height: 1em;
-    padding: 0px 0px;
-    border: 0px;
-    border-radius: .25rem;
-    opacity: .5;
-  }

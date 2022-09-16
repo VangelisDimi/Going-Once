@@ -70,6 +70,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
             ],
         },
     },
@@ -168,3 +169,7 @@ REST_KNOX = {
   'AUTO_REFRESH': True,
   'EXPIRY_DATETIME_FORMAT': api_settings.DATETIME_FORMAT,
 }
+
+MEDIA_ROOT = './media/'
+
+MEDIA_URL = '/media/'

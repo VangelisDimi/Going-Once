@@ -32,6 +32,8 @@ function CreationMap({position,setPosition}){
             },
         }),[])
 
+        if (!(position.lat && position.lng )) return null;
+
         return (
             position ? 
                 <Marker           

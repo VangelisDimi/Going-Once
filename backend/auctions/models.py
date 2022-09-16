@@ -53,7 +53,7 @@ class AuctionImage(models.Model):
     ]
 
     auction = models.ForeignKey(Auction, related_name='images', on_delete=models.CASCADE,blank=False)
-    image = models.ImageField(upload_to='media/auction_images' ,blank=False)
+    image = models.ImageField(upload_to='auction_images' ,blank=False)
     order = models.IntegerField(blank=False,default=1,validators=[MinValueValidator(1)])
 
 

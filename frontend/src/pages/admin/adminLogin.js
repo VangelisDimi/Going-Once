@@ -40,7 +40,6 @@ function LoginField(){
 function AdminLogin(){
     return (
         <div>
-            Admin page
             <LoginField/>
             <SignupButton/>
         </div>

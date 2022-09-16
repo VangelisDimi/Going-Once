@@ -1,0 +1,9 @@
+.btn-close-sm {
+    box-sizing: content-box;
+    width: 1em;
+    height: 1em;
+    padding: 0px 0px;
+    border: 0px;
+    border-radius: .25rem;
+    opacity: .5;
+}

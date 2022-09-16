@@ -25,6 +25,15 @@ const AdminRoute = ({children}) => {
     return(
         userInfo.is_staff ? children : <NoPermission/>
     )
-} 
+}
 
-export {SharedComponent,PublicRoute,AdminRoute};
+
+const UserRoute= ({children}) => {
+    const {userInfo} = useContext(AuthContext);
+
+    return(
+        !userInfo.is_staff ? children : <NoPermission/>
+    )
+}
+
+export {SharedComponent,PublicRoute,AdminRoute,UserRoute};

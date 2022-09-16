@@ -1,9 +1,26 @@
-import { useContext  } from 'react';
+import { useContext,useEffect,useState  } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {BackButton} from '../../components/forms';
 import AuthContext from '../../auth';
 
-function SignupForm(){
+function SignupSuccess(){
     const navigate = useNavigate();
+
+    // Redirect to welcome page after some time
+    useEffect(() => {
+        setTimeout(() => {
+            navigate('/admin');
+        }, 5000)
+    });
+
+    return(
+        <div>
+            <div>Admin User signup successfull.</div>
+        </div>
+    );
+}
+
+function SignupForm({setSuccess}){
     const {adminSignup} = useContext(AuthContext);
 
     return(
@@ -47,14 +64,19 @@ function SignupForm(){
     function HandleSubmit(event){
         event.preventDefault();
         adminSignup(event);
-        // navigate('/signup/success');
+        setSuccess(true);
     };
 }
 
 function AdminSignup() {
+    const [success,setSuccess] = useState(false);
+
+    if(success) return <SignupSuccess/>
+
     return(
         <div>
-            <SignupForm/>
+            <BackButton/>
+            <SignupForm setSuccess={setSuccess}/>
         </div>
     );
 }
