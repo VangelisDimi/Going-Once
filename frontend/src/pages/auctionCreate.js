@@ -30,7 +30,7 @@ const MapForm = forwardRef((props, ref) => {
         }
 
         return (
-            <button onClick={toggleMap} className="btn btn-success dropdown-toggle" aria-expanded={mapShow}>
+            <button onClick={toggleMap} className="btn btn-success dropdown-toggle dropdown-change" aria-expanded={mapShow}>
                 Map
             </button>
         );

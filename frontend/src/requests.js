@@ -1,5 +1,6 @@
 import {useEffect,createContext,useState} from 'react';
 import  AxiosPrivate,{axios} from './axios_config'
+import moment from 'moment'
 
 const RequestContext = createContext();
 
@@ -8,7 +9,9 @@ const RequestInfo = ({children}) => {
 
     const contextData = {
         getUserList: getUserList,
-        createAuction: createAuction
+        createAuction: createAuction,
+        getAuctionList: getAuctionList,
+        getAuction: getAuction
     };
 
     return(
@@ -33,8 +36,8 @@ const RequestInfo = ({children}) => {
         data.append("first_bid",event.target.start_bid.value)
         data.append("location",event.target.location.value)
         data.append("country",event.target.country.value)
-        data.append("started",event.target.start_date.value)
-        data.append("ends",event.target.end_date.value)
+        data.append("started",moment(event.target.start_date.value).toISOString())
+        data.append("ends",moment(event.target.end_date.value).toISOString())
         data.append("description",event.target.description.value)
         data.append("latitude",event.target.lat.value)
         data.append("longitude",event.target.lng.value)
@@ -44,6 +47,23 @@ const RequestInfo = ({children}) => {
         }
 
         return axios.post('/auctions/create/',data);
+    }
+
+    function getAuctionList(page,items){
+        return axios.get('/auctions/getlist/',{
+            params: {
+                page: page,
+                items: items
+            }
+        })
+    }
+
+    function getAuction(id){
+        return axios.get('/auctions/get/',{
+            params: {
+                id:id
+            }
+        });
     }
 }
 

@@ -2,6 +2,8 @@ import os
 from django.db import models
 from users.models import AppUser
 from django.core.validators import MaxValueValidator, MinValueValidator
+from datetime import date, datetime
+import pytz
 
 #null=False
 
@@ -21,6 +23,16 @@ class Auction(models.Model):
         self.seller=AppUser.objects.get(pk=seller_id)
     def get_current_bid(self):
         return "example"
+    def get_status(self):
+        now = datetime.now(pytz.UTC)
+
+        if now < self.started:
+            return "pending"
+        if now >= self.started:
+            if now < self.ends:
+                return "active"
+            elif now >= self.ends:
+                return "closed"
 
     #pk = id
     name = models.CharField(max_length=150,blank=False)

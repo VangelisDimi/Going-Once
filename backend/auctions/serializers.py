@@ -13,8 +13,12 @@ class AuctionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Auction
 
-        fields = ('name','first_bid','location','latitude','longitude','country',
-        'started','ends','description','category','image')
+        fields = ('pk','name','first_bid','location','latitude','longitude','country',
+        'started','ends','description','category','image','seller_id')
+        extra_kwargs = {
+            'pk':{'read_only': True},
+            'seller_id':{'read_only': True}
+        }    
 
     def create(self, validated_data):
         categories = validated_data.pop('category', [])

@@ -27,7 +27,7 @@ const TagForm = forwardRef((props, ref) => {
 
     function Tag({tag,tag_id}){
         return(
-            <span className="badge rounded-pill bg-primary" tag_id={tag_id}>
+            <span className="badge bg-primary" tag_id={tag_id}>
                 {tag}
                 <button type="button" className="btn-close btn-close-sm btn-close-white shadow-none" aria-label="Close" onClick={removeTag}/>
             </span>

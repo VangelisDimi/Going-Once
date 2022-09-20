@@ -1,0 +1,6 @@
+.card-img-top {
+    width: 100%;
+    height: 25vw;
+    object-fit: contain;
+    background-color: rgb(69, 82, 87);
+}

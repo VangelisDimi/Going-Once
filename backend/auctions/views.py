@@ -1,10 +1,11 @@
+from operator import truediv
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 import lxml.etree as ET
 from utils.renderers import CustomJSONRenderer,CustomXMLRenderer
-from django.core.paginator import Paginator
+from rest_framework import generics
 
 from users.models import AppUser
 from users.serializers import UserSerializer
@@ -71,20 +72,48 @@ class ExportJSONView(APIView):
         data['Item'] = item
         return Response(data,content_type='application/json')
 
-class GetAuctionsManage(APIView):
+class GetAuction(APIView):
+    def get(self,request):
+        id = request.GET.get('id')
+
+        auction=Auction.objects.get(pk=id)
+        auction_serializer = AuctionSerializer(auction).data
+
+        if auction_serializer['seller_id'] == request.user.pk:
+            auction_serializer['own_auction'] = True
+        else: auction_serializer['own_auction'] = False
+
+        seller_serializer = UserSerializer(auction.seller)
+        auction_serializer['seller_username'] = seller_serializer.data['username']
+
+        auction_categories = auction.category.all().values('pk','name')
+        auction_serializer['categories'] = auction_categories
+
+        auction_serializer['status']=auction.get_status()
+
+        auction_serializer['current_bid']=auction.get_current_bid()
+        if auction_serializer['own_auction']:
+            auction_bids = Bid.objects.filter(auction=auction).values('time','amount','pk','bidder_id')
+            for bid in auction_bids:
+                bidder_serializer = UserSerializer(bid.bidder)
+                bid['bidder_username'] = bidder_serializer.data['username']
+            auction_serializer['bids'] = auction_bids
+
+        auction_images = AuctionImage.objects.filter(auction=auction).values('image','order')
+        auction_serializer['images'] = auction_images
+
+        return Response(auction_serializer)
+
+class GetAuctionsManage(generics.ListAPIView):
+    queryset = Auction.objects.all().values('pk','name','first_bid','location','latitude','longitude','country',
+    'started','ends','description','seller_id').order_by('-pk')
     permission_classes = [IsAuthenticated & IsAppUser & IsApproved]
 
-    def get(self,request):
-        auction_list = Auction.objects.filter(seller_id=request.user.pk).values('pk','name','first_bid','location','latitude','longitude','country',
-        'started','ends','description','seller_id').order_by('-pk')
+    def list(self,request):
+        auction_queryset = self.get_queryset().filter(seller_id=request.user.pk)
+        auction_page = self.paginate_queryset(auction_queryset)
 
-        items = request.GET.get('items')
-        paginator = Paginator(auction_list, items)
-
-        page_number = request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
-
-        data = list(page_obj)
+        data = list(auction_page)
         for item in data:
             auction = Auction.objects.get(pk=item['pk'])
 
@@ -94,9 +123,11 @@ class GetAuctionsManage(APIView):
             auction_categories = auction.category.all().values('pk','name')
             item['categories'] = auction_categories
 
+            item['status']=auction.get_status()
+
+            item['current_bid']=auction.get_current_bid()
             auction_bids = Bid.objects.filter(auction=auction).values('time','amount','pk','bidder_id')
             for bid in auction_bids:
-                # bidder = AppUser.objects.get(bid.bidder)
                 bidder_serializer = UserSerializer(bid.bidder)
                 bid['bidder_username'] = bidder_serializer.data['username']
             item['bids'] = auction_bids
@@ -104,7 +135,4 @@ class GetAuctionsManage(APIView):
             auction_images = AuctionImage.objects.filter(auction=auction).values('image','order')
             item['images'] = auction_images
 
-        res_data = {}
-        res_data['num_pages'] = paginator.num_pages
-        res_data['items'] = data
-        return Response(res_data)
+        return self.get_paginated_response(data)

@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes,Outlet} from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.min.js'
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import './style.css'
 
 import {AuthInfo} from './auth';
 import {RequestInfo} from './requests';
@@ -14,6 +15,7 @@ import DashBoard from './components/dashBoard';
 import Main from './pages/main';
 import AuctionManage from './pages/auctionManage';
 import CreateAuction from './pages/auctionCreate'
+import Auction from './pages/auction';
 
 import AdminLogin from './pages/admin/adminLogin';
 import AdminMain from './pages/admin/adminMain';
@@ -36,7 +38,7 @@ function App()
                             exact path="/"
                             element = {<SharedComponent private_page={<Main/>} public_page={<Welcome/>}/>}
                         />
-                        <Route path="/signup" element={<Signup />} />
+                        <Route path="/signup" element={<PublicRoute children={<Signup />}/>} />
                         <Route path="/manage" element=
                             {<SharedComponent
                                 private_page={<UserRoute children={<Outlet/>}/>}
@@ -46,6 +48,7 @@ function App()
                             <Route exact path="/manage" element={<AuctionManage/>} />
                             <Route path="/manage/create" element={<CreateAuction/>} />
                         </Route>
+                        <Route path="/auction/:id" element={<Auction/>}/>
                         <Route path="*" element={<NotFound/>}/>
                     </Route>
 
