@@ -1,8 +1,12 @@
+from difflib import diff_bytes
 import os
+from unicodedata import category
 from django.db import models
 from users.models import AppUser
 from django.core.validators import MaxValueValidator, MinValueValidator
-from datetime import date, datetime
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
+from datetime import datetime
 import pytz
 
 #null=False
@@ -34,6 +38,30 @@ class Auction(models.Model):
             elif now >= self.ends:
                 return "closed"
 
+    def clean(self):
+        now = datetime.now(pytz.UTC)
+
+        difference = self.started - now
+        if (difference.total_seconds()/60) < -5:
+            raise ValidationError(
+                {'started': _("Auction can't start earlier than now.")}
+            )
+
+        difference=self.ends-self.started
+        if difference.total_seconds()<0:
+            raise ValidationError(
+                {'ends': _("End date can't be before start date.")}
+            )
+        if (difference.total_seconds()/3600)<1:
+            raise ValidationError(
+                {'started,ends': _("Auction can't last less than one hour.")}
+            )       
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        return super(Auction, self).save(*args, **kwargs)
+        
+
     #pk = id
     name = models.CharField(max_length=150,blank=False)
     category = models.ManyToManyField(Category,blank=False)
@@ -62,7 +90,7 @@ class AuctionImage(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(fields=["order", "auction"], name="unique_image_order")
-    ]
+        ]
 
     auction = models.ForeignKey(Auction, related_name='images', on_delete=models.CASCADE,blank=False)
     image = models.ImageField(upload_to='auction_images' ,blank=False)

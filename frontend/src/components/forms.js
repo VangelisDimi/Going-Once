@@ -1,9 +1,11 @@
-import {useState,useEffect,useImperativeHandle,forwardRef} from 'react';
+import {useState,useEffect,useImperativeHandle,forwardRef,useRef} from 'react';
+import {CreationMap} from './leaflet'
 import {useNavigate} from 'react-router-dom';
+import Collapse from 'react-bootstrap/Collapse';
 import './forms.css'
 
 const TagForm = forwardRef((props, ref) => {
-    const [tags,setTags] = useState({});
+    const [tags,setTags] = useState(props.tags ? props.tags : {});
     const [elements,setElements] = useState([]);
 
     function removeTag(event){
@@ -59,6 +61,71 @@ const TagForm = forwardRef((props, ref) => {
     );
 });
 
+const MapForm = forwardRef((props, ref) => {
+    const [position,setPosition] = useState(props.position ? props.position : {lat:'',lng:''});
+    const [mapShow,setMapShow] = useState(false);
+    const collapseElem = useRef();
+
+    function RemoveMarkerButton(){
+        function removeMarker(){
+            setPosition({lat:'',lng:''});
+        }
+
+        return (
+            <button type="button" onClick={removeMarker} className="btn btn-secondary" disabled={!(position.lat && position.lng)}>
+                Remove position
+            </button>
+        );
+    }
+
+
+    function ShowMapButton(){
+        function toggleMap(){
+            setMapShow(!mapShow);
+        }
+
+        return (
+            <button type="button" onClick={toggleMap} className="btn btn-success dropdown-toggle dropdown-change" aria-expanded={mapShow}>
+                Map
+            </button>
+        );
+    }
+
+    function handleExpand(event){
+        collapseElem.current.scrollIntoView({
+            behavior: "auto",
+            block: "end",
+            inline: "nearest",
+        });
+    }
+
+    useImperativeHandle(ref, () => ({
+        position: position
+    }), [position]);
+
+    return(
+        <>
+            <div className="col-sm-5">
+                <label htmlFor="geo_location"> Geographic Location </label>
+                <div className="input-group" name="geo_location">
+                    <div className="input-group-text">N-S</div>
+                    <input type="text" className="form-control" placeholder="Latitude" name="lat" disabled readOnly value={position.lat}/>
+                    <div className="input-group-text">E-W</div>
+                    <input type="text" className="form-control" placeholder="Longtitude" name="lng" disabled readOnly value={position.lng}/>
+                    <RemoveMarkerButton/>
+                    <ShowMapButton/>
+                </div>
+            </div>
+
+            <Collapse in={mapShow} onEntered={handleExpand}>
+                <div className='container' ref={collapseElem}>
+                    <CreationMap position={position} setPosition={setPosition}/>
+                </div>
+            </Collapse>
+        </>
+    );
+});
+
 
 function BackButton(){
     const navigate = useNavigate();
@@ -69,4 +136,4 @@ function BackButton(){
     );
 }
 
-export {BackButton,TagForm}
+export {BackButton,TagForm,MapForm}

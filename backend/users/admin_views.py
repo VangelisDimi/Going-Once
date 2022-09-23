@@ -51,5 +51,14 @@ class AdminsListView(APIView):
     permission_classes = [IsAuthenticated & IsAdmin & IsApproved]
 
     def get(self,request):
-        queryset = BaseUser.objects.filter(is_staff = True).values('pk','username','first_name','last_name','email','is_approved','is_superuser')
+        queryset = BaseUser.objects.filter(is_staff = True).exclude(pk=request.user.pk).values('pk','username','first_name','last_name','email','is_approved','is_superuser')
         return Response(queryset)
+
+class ApproveUserView(APIView):
+    permission_classes = [IsAuthenticated & IsAdmin & IsApproved]
+
+    def patch(self,request):
+        user = BaseUser.objects.get(pk=request.data['user_id'])
+        user.is_approved = True
+        user.save()
+        return Response(status=status.HTTP_200_OK)

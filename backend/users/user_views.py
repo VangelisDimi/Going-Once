@@ -47,15 +47,3 @@ class PersonalUserInfoView(APIView):
         user = AppUser.objects.get(pk=request.user.pk)
         serializer = UserSerializer(user)
         return Response(serializer.data)
-
-class DeleteView(APIView):
-    permission_classes = [IsAuthenticated & IsAppUser & IsApproved]
-
-    def delete(self,request):
-        user = AppUser.objects.get(pk=request.user.pk)
-        confirm_password = request.data.get('password')
-        if not user.check_password(confirm_password):
-            return Response(status=status.HTTP_401_UNAUTHORIZED)
-        user.delete()
-
-        return Response(status=status.HTTP_200_OK)

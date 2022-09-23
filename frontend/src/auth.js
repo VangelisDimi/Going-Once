@@ -106,8 +106,7 @@ const AuthInfo = ({children}) => {
             data.append("tin",event.target.tin.value)
         }
 
-        axios.post(url,data
-        )
+        axios.post(url,data)
         .then(res => {
             console.log(res);
         })

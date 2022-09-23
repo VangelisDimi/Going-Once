@@ -5,39 +5,106 @@ import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 
 function AdminList() {
-    return(
-        null
+    const [data,setData] = useState([]);
+    const {getAdminList,approveUser} = useContext(RequestContext);
+    const[listItems,setListItems] = useState();
+
+    useEffect(() => {
+        getAdminList()
+        .then(res => {
+            setData(JSON.parse(JSON.stringify(res.data)));
+        });
+    },[getAdminList]); 
+
+    useEffect(() => {
+        let listItems_temp = data.map((user) =>
+            <tr key={user.pk}>
+                <th scope="row">{user.pk}</th>
+                    <td>{user.username} <span className="badge bg-secondary">Admin</span> {user.is_superuser ? <span className="badge bg-secondary">Superuser</span> : null}</td>
+                    <td>{user.first_name} {user.last_name}</td>
+                    <td>{user.email}</td>
+                    <td>{user.is_approved ? <>Approved <i className="bi bi-check-lg text-success"/> </> : 'Pending'}</td>
+                    <td>{!user.is_approved ? <ApproveButton user_id={user.pk}/> : null}</td>
+            </tr>
+        );
+        
+        setListItems(listItems_temp);
+    },[data]);
+
+    return (
+        <table className="table">
+            <thead>
+                <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Username</th>
+                <th scope="col">Full name</th>
+                <th scope="col">E-mail</th>
+                <th scope="col">Status</th>
+                <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {listItems}
+            </tbody>
+        </table>
     );
+
+    function refreshData() {
+        getAdminList()
+        .then(res => {
+            setData(JSON.parse(JSON.stringify(res.data)));
+        });
+    }
+
+    function handleApprove(user_id) {
+        approveUser(user_id)
+        .then(res => {
+            refreshData();
+        });
+    }
+
+    function ApproveButton({user_id}) {
+        return(
+            <button type="button" className="btn btn-success" onClick={() => handleApprove(user_id)}>
+                <i className="bi bi-check-lg"></i> Approve
+            </button>
+        );
+    }
 }
 
 function UserList() {
     const [data,setData] = useState([]);
-    const {getUserList} = useContext(RequestContext);
+    const {getUserList,approveUser} = useContext(RequestContext);
+    const[listItems,setListItems] = useState();
 
     useEffect(() => {
         getUserList()
         .then(res => {
             setData(JSON.parse(JSON.stringify(res.data)));
         });
-    },[]); 
+    },[getUserList]); 
 
 
-    const listItems = data.map((user) =>
-            <tr key={user.pk}>
-                <th scope="row">{user.pk}</th>
-                    <td>{user.username}</td>
-                    <td>{user.first_name} {user.last_name}</td>
-                    <td>{user.email}</td>
-                    <td>{user.phone_number}</td>
-                    <td>{user.street_name} {user.street_number}</td>
-                    <td>{user.postal_code}</td>
-                    <td>{user.country}</td>
-                    <td>{user.location}</td>
-                    <td>{user.tin}</td>
-                    <td>{user.is_approved ? 'Approved' : 'Not approved'}</td>
-                    <td>{!user.is_approved ? <><ApproveButton/> <RejectButton/></> : null}</td>
-            </tr>
-    );
+    useEffect(() => {
+        const listItems_temp = data.map((user) =>
+                <tr key={user.pk}>
+                    <th scope="row">{user.pk}</th>
+                        <td>{user.username}</td>
+                        <td>{user.first_name} {user.last_name}</td>
+                        <td>{user.email}</td>
+                        <td>{user.phone_number}</td>
+                        <td>{user.street_name} {user.street_number}</td>
+                        <td>{user.postal_code}</td>
+                        <td>{user.country}</td>
+                        <td>{user.location}</td>
+                        <td>{user.tin}</td>
+                        <td>{user.is_approved ? <>Approved <i className="bi bi-check-lg text-success"/> </> : 'Pending'}</td>
+                        <td>{!user.is_approved ? <ApproveButton user_id={user.pk}/> : null}</td>
+                </tr>
+        );
+    
+        setListItems(listItems_temp);
+    },[data]);
 
     return (
         <table className="table">
@@ -70,30 +137,17 @@ function UserList() {
         });
     }
 
-    function approveUser(user_id) {
-        refreshData();
-    } 
-
-    function rejectUser(user_id) {
-        refreshData();
+    function handleApprove(user_id) {
+        approveUser(user_id)
+        .then(res => {
+            refreshData();
+        });
     }
 
-    function ApproveButton(user_id) {
-        const[id,setId] = useState(user_id); 
-
+    function ApproveButton({user_id}) {
         return(
-            <button className="btn btn-success" onClick={() => approveUser(user_id)}>
-                <i className="bi bi-check"></i> Approve
-            </button>
-        );
-    }
-
-    function RejectButton(user_id) {
-        const[id,setId] = useState(user_id); 
-
-        return(
-            <button className="btn btn-danger" onClick={() => rejectUser(user_id)}>
-                <i className="bi bi-x"></i> Reject
+            <button type="button" className="btn btn-success" onClick={() => handleApprove(user_id)}>
+                <i className="bi bi-check-lg"></i> Approve
             </button>
         );
     }

@@ -16,6 +16,8 @@ import Main from './pages/main';
 import AuctionManage from './pages/auctionManage';
 import CreateAuction from './pages/auctionCreate'
 import Auction from './pages/auction';
+import UpdateAuction from './pages/auctionUpdate';
+import AuctionNavigate from './pages/auctionNavigate';
 
 import AdminLogin from './pages/admin/adminLogin';
 import AdminMain from './pages/admin/adminMain';
@@ -48,7 +50,11 @@ function App()
                             <Route exact path="/manage" element={<AuctionManage/>} />
                             <Route path="/manage/create" element={<CreateAuction/>} />
                         </Route>
-                        <Route path="/auction/:id" element={<Auction/>}/>
+                        <Route path="/auction/:id" element={<Outlet/>}>
+                            <Route exact path="/auction/:id" element={<Auction/>}/>
+                            <Route path="/auction/:id/edit" element={<Auction/>}/>
+                        </Route>
+                        <Route path="/navigate" element={<AuctionNavigate/>}/>
                         <Route path="*" element={<NotFound/>}/>
                     </Route>
 

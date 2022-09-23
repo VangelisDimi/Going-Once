@@ -5,7 +5,7 @@ import AuthContext from '../../auth';
 function SignupButton(){
     const navigate = useNavigate();
     return(
-        <button onClick={() => navigate("/admin/signup")}>Signup</button>
+        <button type="button" onClick={() => navigate("/admin/signup")}>Signup</button>
     );
 }
 

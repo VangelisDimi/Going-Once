@@ -4,3 +4,11 @@
     object-fit: contain;
     background-color: rgb(69, 82, 87);
 }
+
+.bg-small {
+    margin:0.50em;
+}
+
+.bi-margin {
+    margin:0.10em;
+}

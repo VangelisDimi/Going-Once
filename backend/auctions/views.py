@@ -1,3 +1,4 @@
+from functools import partial
 from operator import truediv
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
@@ -10,8 +11,11 @@ from rest_framework import generics
 from users.models import AppUser
 from users.serializers import UserSerializer
 from .serializers import AuctionSerializer
-from utils.permissions import IsAdmin, IsAppUser, IsApproved
+from utils.permissions import IsAdmin, IsAppUser, IsApproved, OwnsAuction, EditAuction
 from .models import Auction, Bid, Category,AuctionImage
+
+from datetime import datetime
+import pytz
 
 class CreateAuctionView(APIView):
     permission_classes = [IsAuthenticated & IsAppUser & IsApproved]
@@ -21,6 +25,16 @@ class CreateAuctionView(APIView):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(status=status.HTTP_201_CREATED)
+
+class UpdateAuction(APIView):
+    permission_classes = [IsAuthenticated & IsAppUser & IsApproved & OwnsAuction & EditAuction]
+
+    def patch(self,request):
+        auction=Auction.objects.get(pk=request.data['id'])
+        serializer = AuctionSerializer(auction,data=request.data,partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(status=status.HTTP_200_OK)
 
 class ExportXMLView(APIView):
     renderer_classes = (CustomXMLRenderer,)
@@ -73,6 +87,8 @@ class ExportJSONView(APIView):
         return Response(data,content_type='application/json')
 
 class GetAuction(APIView):
+    authentication_classes = []
+
     def get(self,request):
         id = request.GET.get('id')
 
@@ -92,8 +108,9 @@ class GetAuction(APIView):
         auction_serializer['status']=auction.get_status()
 
         auction_serializer['current_bid']=auction.get_current_bid()
+        auction_bids = Bid.objects.filter(auction=auction).values('time','amount','pk','bidder_id')
+        auction_serializer['num_bids']=len(auction_bids)
         if auction_serializer['own_auction']:
-            auction_bids = Bid.objects.filter(auction=auction).values('time','amount','pk','bidder_id')
             for bid in auction_bids:
                 bidder_serializer = UserSerializer(bid.bidder)
                 bid['bidder_username'] = bidder_serializer.data['username']
@@ -106,11 +123,13 @@ class GetAuction(APIView):
 
 class GetAuctionsManage(generics.ListAPIView):
     queryset = Auction.objects.all().values('pk','name','first_bid','location','latitude','longitude','country',
-    'started','ends','description','seller_id').order_by('-pk')
+    'started','ends','description','seller_id').order_by('started')
     permission_classes = [IsAuthenticated & IsAppUser & IsApproved]
 
     def list(self,request):
-        auction_queryset = self.get_queryset().filter(seller_id=request.user.pk)
+        now = datetime.now(pytz.UTC)
+
+        auction_queryset = self.get_queryset().filter(seller_id=request.user.pk).exclude(ends__lte=now)
         auction_page = self.paginate_queryset(auction_queryset)
 
         data = list(auction_page)
@@ -126,13 +145,53 @@ class GetAuctionsManage(generics.ListAPIView):
             item['status']=auction.get_status()
 
             item['current_bid']=auction.get_current_bid()
-            auction_bids = Bid.objects.filter(auction=auction).values('time','amount','pk','bidder_id')
-            for bid in auction_bids:
-                bidder_serializer = UserSerializer(bid.bidder)
-                bid['bidder_username'] = bidder_serializer.data['username']
-            item['bids'] = auction_bids
+            auction_bids = Bid.objects.filter(auction=auction)
+            item['num_bids'] = len(auction_bids)
 
             auction_images = AuctionImage.objects.filter(auction=auction).values('image','order')
             item['images'] = auction_images
 
         return self.get_paginated_response(data)
+
+class GetAuctionsNavigate(generics.ListAPIView):
+    queryset = Auction.objects.all().values('pk','name','first_bid','location','latitude','longitude','country',
+    'started','ends','description','seller_id').order_by('started')
+    authentication_classes = []
+
+    def list(self,request):
+        now = datetime.now(pytz.UTC)
+
+        auction_queryset = self.get_queryset().exclude(ends__lte=now)
+        if request.user:
+            auction_queryset=auction_queryset.exclude(seller_id=request.user.pk)
+        auction_page = self.paginate_queryset(auction_queryset)
+
+        data = list(auction_page)
+        for item in data:
+            auction = Auction.objects.get(pk=item['pk'])
+
+            seller_serializer = UserSerializer(auction.seller)
+            item['seller_username'] = seller_serializer.data['username']
+
+            auction_categories = auction.category.all().values('pk','name')
+            item['categories'] = auction_categories
+
+            item['status']=auction.get_status()
+
+            item['current_bid']=auction.get_current_bid()
+            auction_bids = Bid.objects.filter(auction=auction)
+            item['num_bids'] = len(auction_bids)
+
+            auction_images = AuctionImage.objects.filter(auction=auction).values('image','order')
+            item['images'] = auction_images
+
+        return self.get_paginated_response(data)
+
+class DeleteAuction(APIView):
+    permission_classes = [IsAuthenticated & IsAppUser & IsApproved & OwnsAuction & EditAuction] 
+
+    def delete(self,request):
+        auction=Auction.objects.get(pk=request.data['id'])
+        auction.delete()
+
+        return Response(status=status.HTTP_200_OK)

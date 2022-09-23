@@ -1,13 +1,3 @@
-/*https://stackoverflow.com/questions/47175786/rotate-bootstrap-dropdown-caret-on-toggle-and-prevent-close-if-clicked-inside*/
-.dropdown-change[aria-expanded="false"]:after {
-    transform: rotate(-90deg);
-}
-  
-/*for the animation*/
-.dropdown-change:after {
-    transition: 0.15s;
-}
-
 /*https://stackoverflow.com/questions/3790935/can-i-hide-the-html5-number-input-s-spin-box*/
 .no-spinbox::-webkit-outer-spin-button,
 .no-spinbox::-webkit-inner-spin-button {

@@ -1,5 +1,6 @@
-import { useEffect,useState} from 'react';
+import { useEffect,useState,useContext} from 'react';
 import {DisplayMap} from '../components/leaflet'
+import AuthContext from '../auth';
 import './auctions.css'
 
 function Images({image_list}){
@@ -12,7 +13,7 @@ function Images({image_list}){
         if(image_list.length===1)
         {
             element_temp=( 
-                <img src={IMG_URL + "/" + image_list[0].image} class="card-img-top" alt="Auction Image"></img>
+                <img src={IMG_URL + "/" + image_list[0].image} class="card-img-top" alt="Auction"></img>
             );
         }
         else if(image_list.length>1){
@@ -27,7 +28,7 @@ function Images({image_list}){
                 );
                 images.push(
                     <div class={"carousel-item" +  (i===0 ? " active" : "")}>
-                        <img src={IMG_URL + "/" + image_list[i].image} class="card-img-top" alt={"Image" + (i+1).toString()}/>
+                        <img src={IMG_URL + "/" + image} class="card-img-top" alt={"Image" + (i+1).toString()}/>
                     </div>
                 )
                 i++;
@@ -53,7 +54,7 @@ function Images({image_list}){
             );
         }
         setElement(element_temp);
-    },[])
+    },[image_list])
 
     return(
         <>
@@ -63,13 +64,11 @@ function Images({image_list}){
 }
 
 function AuctionDate({starts,ends,status}){
-    const [today,setToday] = useState();
     const [date,setDate] = useState();
 
     useEffect(() => {
-        const today = new Date();
         const start_date = new Date(starts);
-        const end_date =new Date(ends);
+        const end_date = new Date(ends);
         const options = { day: 'numeric', month: 'numeric', year: 'numeric',hour: '2-digit', minute:'2-digit' };
         
 
@@ -95,7 +94,7 @@ function AuctionDate({starts,ends,status}){
             );
         }
         
-    },[starts,ends])
+    },[starts,ends,status])
 
     return(<>{date}</>);
 }
@@ -166,4 +165,45 @@ function AuctionStatus({status}){
     }
 }
 
-export {Images,AuctionDate,AuctionPrice,AuctionCategories,AuctionMap,AuctionStatus}
+function AuctionList({auctions}){
+    const [elements,setElements] = useState([]);
+    const {userInfo} = useContext(AuthContext);
+
+    useEffect(() => {
+        const elements_temp=[]
+        for (let auction of auctions){
+            elements_temp.push(
+                <div class="card">
+                    {auction.images.length !== 0 ? <Images image_list={auction.images}/> : null}
+                    <div class="card-body">
+                        <h5 class="card-title">{auction.name} <AuctionStatus status={auction.status}/></h5>
+                        <p class="card-text">
+                            <small class="text-muted">
+                                    <i class="bi bi-person-fill bi-margin"/>
+                                    {auction.seller_username} 
+                                    {auction.seller_username===userInfo.username ? <span className="badge rounded-pill bg-secondary bg-small">You</span> : null}
+                            </small>
+                        </p>
+                        <p class="card-text"> <i class="bi bi-geo-alt-fill"></i> {auction.location},{auction.country}</p>
+                        <p class="card-text"> <AuctionPrice start={auction.first_bid} current={auction.current_bid} num_bids={auction.num_bids} /></p>
+                        <p class="card-text"><AuctionCategories categories={auction.categories}/></p>
+                        <a href={`/auction/${auction.pk}`} class="link-primary">View more</a>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-muted"><AuctionDate starts={auction.started} ends={auction.ends} status={auction.status}/></small>
+                    </div>
+                </div>
+            );
+        }
+
+        setElements(elements_temp);
+    },[auctions,userInfo])
+
+    return(
+        <>
+            {elements}
+        </>
+    )
+}
+
+export {Images,AuctionDate,AuctionPrice,AuctionCategories,AuctionMap,AuctionStatus,AuctionList}
