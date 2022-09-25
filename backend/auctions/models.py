@@ -1,6 +1,4 @@
-from difflib import diff_bytes
 import os
-from unicodedata import category
 from django.db import models
 from users.models import AppUser
 from django.core.validators import MaxValueValidator, MinValueValidator
@@ -26,7 +24,18 @@ class Auction(models.Model):
     def set_seller(self,seller_id):
         self.seller=AppUser.objects.get(pk=seller_id)
     def get_current_bid(self):
-        return "example"
+        bids = Bid.objects.filter(auction=self).order_by('-amount')
+        if len(bids)==0:
+            return 0
+        else:
+            return bids[0].amount
+    def get_current_bidder_id(self):
+        bids = Bid.objects.filter(auction=self).order_by('-amount')
+        if len(bids)==0:
+            return ''
+        else:
+            return bids[0].bidder.pk
+
     def get_status(self):
         now = datetime.now(pytz.UTC)
 
@@ -98,6 +107,11 @@ class AuctionImage(models.Model):
 
 
 class Bid(models.Model):
+    def set_bidder(self,bidder_id):
+        self.bidder=AppUser.objects.get(pk=bidder_id)
+    def set_auction(self,auction_id):
+        self.auction=Auction.objects.get(pk=auction_id)
+
     #pk = id
     time =  models.DateTimeField(blank=False)
     amount = models.DecimalField(max_digits=7, decimal_places=2,blank=False)#in dollars

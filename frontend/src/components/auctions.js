@@ -1,6 +1,7 @@
 import { useEffect,useState,useContext} from 'react';
 import {DisplayMap} from '../components/leaflet'
 import AuthContext from '../auth';
+import RequestContext from '../requests'
 import './auctions.css'
 
 function Images({image_list}){
@@ -99,7 +100,7 @@ function AuctionDate({starts,ends,status}){
     return(<>{date}</>);
 }
 
-function AuctionPrice({start,current,num_bids}){
+function AuctionPrice({start,current,num_bids,own_bid,status}){
     if(num_bids === 0){
         return(
             <>
@@ -108,9 +109,19 @@ function AuctionPrice({start,current,num_bids}){
         );
     }
     else{
+        if (status==='closed'){
+            return(
+                <>
+                    Sold at: {current} $ {own_bid ? <span class="badge rounded-pill text-bg-success">Your bid</span> : null}
+                    <small class="text-muted" style={{margin:"1em"}}> {num_bids} bids</small>
+                </>
+            );
+        }
+
         return(
             <>
-                Currently: {current} $ <small class="text-muted" style={{margin:"1em"}}> {num_bids} bids</small>
+                Currently: {current} $ {own_bid ? <span class="badge rounded-pill text-bg-success">Your bid</span> : null}
+                <small class="text-muted" style={{margin:"1em"}}> {num_bids} bids</small>
             </>
         );
     }
@@ -165,9 +176,88 @@ function AuctionStatus({status}){
     }
 }
 
+function ExportAuction({auction_id}){
+    const {exportJSON,exportXML} = useContext(RequestContext);
+    const {userInfo} = useContext(AuthContext);
+
+    function handleExportJSON(){
+        exportJSON(auction_id)
+        .then(res => {
+            //Download .json file
+            //https://stackoverflow.com/questions/55613438/reactwrite-to-json-file-or-export-download-no-server
+            // create file in browser
+            const fileName = `auction_${auction_id}`;
+            const data = JSON.stringify(res.data,null,4)
+            const blob = new Blob([data], {type: 'application/json;charset=utf-8;'});
+            const href = URL.createObjectURL(blob);
+
+            // create "a" HTLM element with href to file
+            const link = document.createElement("a");
+            link.href = href;
+            link.download = fileName + ".json";
+            document.body.appendChild(link);
+            link.click();
+
+            // clean up "a" element & remove ObjectURL
+            document.body.removeChild(link);
+            URL.revokeObjectURL(href);
+        });
+    }
+
+    function handleExportXML(){
+        exportXML(auction_id)
+        .then(res => {
+            //Download .json file
+            //https://stackoverflow.com/questions/55613438/reactwrite-to-json-file-or-export-download-no-server
+            // create file in browser
+            const fileName = `auction_${auction_id}`;
+            const data = res.data
+            const blob = new Blob([data], {type: 'application/xml;charset=utf-8;'});
+            const href = URL.createObjectURL(blob);
+
+            // create "a" HTLM element with href to file
+            const link = document.createElement("a");
+            link.href = href;
+            link.download = fileName + ".xml";
+            document.body.appendChild(link);
+            link.click();
+
+            // clean up "a" element & remove ObjectURL
+            document.body.removeChild(link);
+            URL.revokeObjectURL(href);
+        });
+    }
+
+    if(userInfo.is_staff===false) return null;
+
+    return(
+        <div class="card-header">
+            <button type="button" className="btn btn-success btn-margin" onClick={handleExportJSON}>
+                <i class="bi bi-braces"></i> .json
+            </button>
+            <button type="button" className="btn btn-warning btn-margin" onClick={handleExportXML}> 
+                <i class="bi bi-code-slash"></i> .xml
+            </button>
+        </div>
+    );
+}
+
+function AuctionUsername({username}){
+    const {userInfo} = useContext(AuthContext);
+
+    return(
+        <p class="card-text">
+            <small class="text-muted">
+                    <i class="bi bi-person-fill bi-margin"/>
+                    {username} 
+                    {username===userInfo.username ? <span className="badge rounded-pill bg-secondary bg-small">You</span> : null}
+            </small>
+        </p>
+    );
+}
+
 function AuctionList({auctions}){
     const [elements,setElements] = useState([]);
-    const {userInfo} = useContext(AuthContext);
 
     useEffect(() => {
         const elements_temp=[]
@@ -175,17 +265,12 @@ function AuctionList({auctions}){
             elements_temp.push(
                 <div class="card">
                     {auction.images.length !== 0 ? <Images image_list={auction.images}/> : null}
+                    <ExportAuction auction_id={auction.pk}/>
                     <div class="card-body">
                         <h5 class="card-title">{auction.name} <AuctionStatus status={auction.status}/></h5>
-                        <p class="card-text">
-                            <small class="text-muted">
-                                    <i class="bi bi-person-fill bi-margin"/>
-                                    {auction.seller_username} 
-                                    {auction.seller_username===userInfo.username ? <span className="badge rounded-pill bg-secondary bg-small">You</span> : null}
-                            </small>
-                        </p>
+                        <AuctionUsername username={auction.seller_username}/>
                         <p class="card-text"> <i class="bi bi-geo-alt-fill"></i> {auction.location},{auction.country}</p>
-                        <p class="card-text"> <AuctionPrice start={auction.first_bid} current={auction.current_bid} num_bids={auction.num_bids} /></p>
+                        <p class="card-text"> <AuctionPrice start={auction.first_bid} current={auction.current_bid} num_bids={auction.num_bids} own_bid={auction.own_bid} status={auction.status}/></p>
                         <p class="card-text"><AuctionCategories categories={auction.categories}/></p>
                         <a href={`/auction/${auction.pk}`} class="link-primary">View more</a>
                     </div>
@@ -197,7 +282,7 @@ function AuctionList({auctions}){
         }
 
         setElements(elements_temp);
-    },[auctions,userInfo])
+    },[auctions])
 
     return(
         <>
@@ -206,4 +291,4 @@ function AuctionList({auctions}){
     )
 }
 
-export {Images,AuctionDate,AuctionPrice,AuctionCategories,AuctionMap,AuctionStatus,AuctionList}
+export {Images,AuctionDate,AuctionPrice,AuctionCategories,AuctionMap,AuctionStatus,AuctionList,AuctionUsername,ExportAuction}

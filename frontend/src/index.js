@@ -52,14 +52,19 @@ function App()
                         </Route>
                         <Route path="/auction/:id" element={<Outlet/>}>
                             <Route exact path="/auction/:id" element={<Auction/>}/>
-                            <Route path="/auction/:id/edit" element={<Auction/>}/>
+                            <Route path="/auction/:id/edit" element=
+                                {<SharedComponent
+                                    private_page={<Auction/>}
+                                    public_page={<NoPermission/>}
+                                />}
+                            />
                         </Route>
                         <Route path="/navigate" element={<AuctionNavigate/>}/>
                         <Route path="*" element={<NotFound/>}/>
                     </Route>
 
                     {/* Admin Page */}
-                    <Route path="/admin" element={<> <DashBoard/> <Outlet /> </>}>
+                    <Route path="/admin" element={<> <DashBoard/> <Outlet/> </>}>
                         <Route exact path="/admin" element=
                             {<SharedComponent 
                                 private_page={<AdminRoute children={<AdminMain/>} />} 

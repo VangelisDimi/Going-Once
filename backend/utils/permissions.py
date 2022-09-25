@@ -35,6 +35,13 @@ class EditAuction(permissions.BasePermission):
             return True
         return False
 
+class ActiveAuction(permissions.BasePermission):
+    def has_permission(self, request, view):
+        auction = Auction.objects.get(pk=request.data['id'])
+        if auction.get_status() == "active":
+            return True
+        return False
+
 class PasswordConfirm(permissions.BasePermission):
     def has_permission(self, request, view):
         user = AppUser.objects.get(pk=request.user.pk)

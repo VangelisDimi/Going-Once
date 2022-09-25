@@ -71,6 +71,11 @@ function NavbarItems(){
                             Manage Users
                     </NavLink>
                 </li>
+                <li className="nav-item">
+                    <a className="nav-link" href='/'>
+                        Main Page
+                    </a>
+                </li>
             </ul>
         );
     }
@@ -88,6 +93,15 @@ function NavbarItems(){
                     <NavLink to='/manage' className={"nav-link" + (location.startsWith("/manage") ? " active" : "")}>
                             Manage
                     </NavLink>
+                </li>
+                :
+                null
+            }
+            {authorized && userInfo.is_staff ?
+                <li className="nav-item">
+                    <a className="nav-link" href='/admin'>
+                        Admin Page
+                    </a>
                 </li>
                 :
                 null
@@ -133,6 +147,15 @@ function DashBoard(){
     const location = useLocation().pathname;
 
     if(location.startsWith("/admin") && authorized && !userInfo.is_staff) return null;
+
+    if(authorized && !userInfo.is_approved){ 
+        return(
+            <nav className="navbar navbar-expand-lg navbar-light bg-light">
+                <NavBarLogo/>
+                <UserDropDown/>
+            </nav>
+        );
+    }
 
     return(
         <nav className="navbar navbar-expand-lg navbar-light bg-light">

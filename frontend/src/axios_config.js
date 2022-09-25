@@ -12,7 +12,7 @@ const AxiosPrivate = () => {
     const axios_private_ins = axios.create({
         baseURL: 'http://localhost:8000/',
         headers : {
-            Authorization: "Token " + token,
+            Authorization: (token ? "Token " + token : '')
         },
     });
 

@@ -5,6 +5,7 @@ function NavigatePages({pages,current,params,setParams}){
 
     const changePage = useCallback((page) => {
         params.set("page",page);
+        if (page === 1) params.delete("page");
         setParams(params);
     },[params,setParams]);
 

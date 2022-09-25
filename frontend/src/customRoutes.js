@@ -4,10 +4,10 @@ import {NoPermission} from './pages/errors'
 import AuthContext from './auth'
 
 const SharedComponent = ({private_page,public_page}) => {
-    const {authorized} = useContext(AuthContext);
+    const {authorized,userInfo} = useContext(AuthContext);
     
     return(
-        authorized ? private_page : public_page
+        authorized && userInfo.is_approved ? private_page : public_page
     )
 }
 
@@ -23,10 +23,9 @@ const AdminRoute = ({children}) => {
     const {userInfo} = useContext(AuthContext);
 
     return(
-        userInfo.is_staff ? children : <NoPermission/>
+        userInfo.is_staff && userInfo.is_approved ? children : <NoPermission/>
     )
 }
-
 
 const UserRoute= ({children}) => {
     const {userInfo} = useContext(AuthContext);
@@ -34,6 +33,10 @@ const UserRoute= ({children}) => {
     return(
         !userInfo.is_staff ? children : <NoPermission/>
     )
+}
+
+const PrivateRoute = ({children}) => {
+    
 }
 
 export {SharedComponent,PublicRoute,AdminRoute,UserRoute};

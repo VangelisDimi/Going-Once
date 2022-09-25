@@ -17,6 +17,9 @@ const RequestInfo = ({children}) => {
         getAuction: getAuction,
         updateAuction: updateAuction,
         deleteAuction: deleteAuction,
+        exportJSON: exportJSON,
+        exportXML: exportXML,
+        submitBid: submitBid
     };
 
     return(
@@ -112,6 +115,30 @@ const RequestInfo = ({children}) => {
         const data = new FormData();
         data.append("id",id);
         return axios.delete('/auctions/delete/',{ data: data });
+    }
+
+    function exportJSON(auction_id){
+        return axios.get('/auctions/exportjson/',{
+            params: {
+                id:auction_id
+            }
+        });
+    }
+
+    function exportXML(auction_id){
+        return axios.get('/auctions/exportxml/',{
+            params: {
+                id:auction_id
+            }
+        });
+    }
+
+    function submitBid(event,auction_id){
+        const data = new FormData();
+        data.append("id",auction_id);
+        data.append("amount",event.target.amount.value);
+
+        return axios.post('/auctions/addbid/',data);
     }
 }
 

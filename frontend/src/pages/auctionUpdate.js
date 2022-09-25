@@ -141,6 +141,12 @@ function UpdateAuctionForm({auction}){
 }
 
 function UpdateAuction({auction}){
+    if(auction.status==="closed"){
+        return(
+            <>Auction is closed</>
+        );
+    }
+
     return(
         <>
             <BackButton/>
