@@ -1,23 +1,30 @@
 import {useState,useEffect,useContext} from 'react';
+import {useSearchParams} from 'react-router-dom';
 import RequestContext from '../../requests'
+import {NavigatePages} from '../../components/pagination'
 
 import Tab from 'react-bootstrap/Tab';
 import Tabs from 'react-bootstrap/Tabs';
 
 function AdminList() {
-    const [data,setData] = useState([]);
     const {getAdminList,approveUser} = useContext(RequestContext);
+    const [searchParams, setSearchParams] = useSearchParams({});
+    const [data,setData] = useState({results:[]});
     const[listItems,setListItems] = useState();
 
     useEffect(() => {
-        getAdminList()
+        const page = (searchParams.get("page") ? searchParams.get("page") : 1);
+        const items =  (searchParams.get("items") ? searchParams.get("items") : 5);
+
+        getAdminList(page,items)
         .then(res => {
             setData(JSON.parse(JSON.stringify(res.data)));
+            window.scrollTo(0, 0);
         });
-    },[getAdminList]); 
+    },[getAdminList,searchParams]); 
 
     useEffect(() => {
-        let listItems_temp = data.map((user) =>
+        let listItems_temp = data.results.map((user) =>
             <tr key={user.pk}>
                 <th scope="row">{user.pk}</th>
                     <td>{user.username} <span className="badge bg-secondary">Admin</span> {user.is_superuser ? <span className="badge bg-secondary">Superuser</span> : null}</td>
@@ -32,6 +39,7 @@ function AdminList() {
     },[data]);
 
     return (
+        <>
         <table className="table">
             <thead>
                 <tr>
@@ -47,12 +55,19 @@ function AdminList() {
                 {listItems}
             </tbody>
         </table>
+
+        {data ? <NavigatePages pages={data.total_pages} current={data.current} params={searchParams} setParams={setSearchParams}/> : null}
+        </>
     );
 
     function refreshData() {
-        getAdminList()
+        const page = (searchParams.get("page") ? searchParams.get("page") : 1);
+        const items =  (searchParams.get("items") ? searchParams.get("items") : 5);
+
+        getAdminList(page,items)
         .then(res => {
             setData(JSON.parse(JSON.stringify(res.data)));
+            window.scrollTo(0, 0);
         });
     }
 
@@ -73,20 +88,25 @@ function AdminList() {
 }
 
 function UserList() {
-    const [data,setData] = useState([]);
     const {getUserList,approveUser} = useContext(RequestContext);
+    const [searchParams, setSearchParams] = useSearchParams({});
+    const [data,setData] = useState({results:[]});
     const[listItems,setListItems] = useState();
 
     useEffect(() => {
-        getUserList()
+        const page = (searchParams.get("page") ? searchParams.get("page") : 1);
+        const items =  (searchParams.get("items") ? searchParams.get("items") : 5);
+
+        getUserList(page,items)
         .then(res => {
             setData(JSON.parse(JSON.stringify(res.data)));
+            window.scrollTo(0, 0);
         });
-    },[getUserList]); 
+    },[getUserList,searchParams]); 
 
 
     useEffect(() => {
-        const listItems_temp = data.map((user) =>
+        const listItems_temp = data.results.map((user) =>
                 <tr key={user.pk}>
                     <th scope="row">{user.pk}</th>
                         <td>{user.username}</td>
@@ -107,6 +127,7 @@ function UserList() {
     },[data]);
 
     return (
+        <>
         <table className="table">
             <thead>
                 <tr>
@@ -128,12 +149,19 @@ function UserList() {
                 {listItems}
             </tbody>
         </table>
+
+        {data ? <NavigatePages pages={data.total_pages} current={data.current} params={searchParams} setParams={setSearchParams}/> : null}
+        </>
     );
 
     function refreshData() {
-        getUserList()
+        const page = (searchParams.get("page") ? searchParams.get("page") : 1);
+        const items =  (searchParams.get("items") ? searchParams.get("items") : 5);
+
+        getUserList(page,items)
         .then(res => {
             setData(JSON.parse(JSON.stringify(res.data)));
+            window.scrollTo(0, 0);
         });
     }
 

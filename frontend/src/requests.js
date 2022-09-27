@@ -29,12 +29,22 @@ const RequestInfo = ({children}) => {
         </RequestContext.Provider>
     );
 
-    function getUserList(){
-        return axios.get('/users/admin/getuserslist/');
+    function getUserList(page,items){
+        return axios.get('/users/admin/getuserslist/',{
+            params: {
+                page: page,
+                items: items
+            }
+        });
     }
 
-    function getAdminList(){
-        return axios.get('/users/admin/getadminslist/');
+    function getAdminList(page,items){
+        return axios.get('/users/admin/getadminslist/',{
+            params: {
+                page: page,
+                items: items
+            }
+        });
     }
 
     function approveUser(user_id){

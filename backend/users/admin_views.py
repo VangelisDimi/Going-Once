@@ -1,6 +1,3 @@
-from cmath import inf
-from collections import UserList
-from dataclasses import field
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -16,6 +13,7 @@ from utils.permissions import IsAdmin,IsApproved
 
 from rest_framework.authentication import BasicAuthentication
 from knox.views import LoginView as KnoxLoginView
+from rest_framework import generics
 
 #Admin
 class RegisterView(APIView):
@@ -38,21 +36,22 @@ class LoginView(KnoxLoginView):
     authentication_classes = [BasicAuthentication]
     permission_classes = [IsAuthenticated & IsAdmin]
 
-class UsersListView(APIView):
+class UsersListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated & IsAdmin & IsApproved]
+    queryset = AppUser.objects.all().values('pk','username','first_name','last_name','email','is_approved',
+    'phone_number','street_name','street_number','postal_code','country','location','tin').order_by('pk')
+    def list(self,request):
+        response = self.paginate_queryset(self.get_queryset())
+        return self.get_paginated_response(response)
 
-    def get(self,request):
-        queryset = AppUser.objects.all().values('pk','username','first_name','last_name','email','is_approved',
-        'phone_number','street_name','street_number','postal_code','country','location','tin')
-
-        return Response(queryset)
-
-class AdminsListView(APIView):
+class AdminsListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated & IsAdmin & IsApproved]
+    queryset = BaseUser.objects.filter(is_staff = True).values('pk','username','first_name','last_name','email','is_approved','is_superuser').order_by('pk')
 
-    def get(self,request):
-        queryset = BaseUser.objects.filter(is_staff = True).exclude(pk=request.user.pk).values('pk','username','first_name','last_name','email','is_approved','is_superuser')
-        return Response(queryset)
+    def list(self,request):
+        queryset = self.get_queryset().exclude(pk=request.user.pk)
+        response = self.paginate_queryset(queryset)
+        return self.get_paginated_response(response)
 
 class ApproveUserView(APIView):
     permission_classes = [IsAuthenticated & IsAdmin & IsApproved]
