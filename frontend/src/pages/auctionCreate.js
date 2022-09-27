@@ -1,6 +1,5 @@
 import {useContext,useRef} from 'react';
 import RequestContext from '../requests';
-import './auctionCreate.css'
 
 import {BackButton,TagForm,MapForm} from '../components/forms';
 
@@ -19,7 +18,7 @@ function CreateAuctionForm(){
                 <label htmlFor="auction-start_bid"> Starting Bid </label>
                 <div className="input-group" name="geo-location" id="auction-start_bid">
                     <div className="input-group-text">$</div>
-                    <input type="number" placeholder="0.00" className="form-control no-spinbox" name="start_bid" />
+                    <input type="number" placeholder="0.00" step="0.01" className="form-control no-spinbox" name="start_bid" />
                 </div>
             </div>
             <label htmlFor="auction-location"> Location </label>

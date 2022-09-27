@@ -26,7 +26,7 @@ class Auction(models.Model):
     def get_current_bid(self):
         bids = Bid.objects.filter(auction=self).order_by('-amount')
         if len(bids)==0:
-            return 0
+            return self.first_bid
         else:
             return bids[0].amount
     def get_current_bidder_id(self):
@@ -74,7 +74,7 @@ class Auction(models.Model):
     #pk = id
     name = models.CharField(max_length=150,blank=False)
     category = models.ManyToManyField(Category,blank=False)
-    first_bid = models.DecimalField(max_digits=7, decimal_places=2,blank=False)#in dollars
+    first_bid = models.DecimalField(max_digits=6, decimal_places=2,blank=False)#in dollars
     location = models.CharField(max_length=50,blank=False)
     latitude = models.DecimalField(max_digits=8, decimal_places=6,blank=True,null=True,
         validators=[
@@ -114,7 +114,7 @@ class Bid(models.Model):
 
     #pk = id
     time =  models.DateTimeField(blank=False)
-    amount = models.DecimalField(max_digits=7, decimal_places=2,blank=False)#in dollars
+    amount = models.DecimalField(max_digits=6, decimal_places=2,blank=False)#in dollars
 
     auction = models.ForeignKey(Auction, related_name='bids', on_delete=models.CASCADE,blank=False)
     bidder = models.ForeignKey(AppUser, related_name='bids', on_delete=models.CASCADE,blank=False)

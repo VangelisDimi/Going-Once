@@ -16,8 +16,8 @@ import Main from './pages/main';
 import AuctionManage from './pages/auctionManage';
 import CreateAuction from './pages/auctionCreate'
 import Auction from './pages/auction';
-import UpdateAuction from './pages/auctionUpdate';
 import AuctionNavigate from './pages/auctionNavigate';
+import CategoryNavigate from './pages/categoryList';
 
 import AdminLogin from './pages/admin/adminLogin';
 import AdminMain from './pages/admin/adminMain';
@@ -59,7 +59,9 @@ function App()
                                 />}
                             />
                         </Route>
-                        <Route path="/navigate" element={<AuctionNavigate/>}/>
+                        <Route path="/navigate" element={<CategoryNavigate/>}/>
+                        <Route path="/navigate/all" element={<AuctionNavigate/>}/>
+                        <Route path="/navigate/categories/:parent_category" element={<AuctionNavigate/>}/>
                         <Route path="*" element={<NotFound/>}/>
                     </Route>
 

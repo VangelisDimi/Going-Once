@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import CreateAuctionView,UpdateAuction,ExportXMLView,ExportJSONView,GetAuctionsManage,GetAuction,DeleteAuction,GetAuctionsNavigate,AddBid
+from .views import CreateAuctionView,UpdateAuction,ExportXMLView,ExportJSONView,GetAuctionsManage,GetAuction,DeleteAuction,GetAuctionsNavigate,AddBid,CategoryList
 
 #API endpoints
 urlpatterns = [
@@ -11,5 +11,6 @@ urlpatterns = [
    path('getlistmanage/',GetAuctionsManage.as_view()),
    path('getlistnavigate/',GetAuctionsNavigate.as_view()),
    path('exportxml/',ExportXMLView.as_view()),
-   path('exportjson/',ExportJSONView.as_view())
+   path('exportjson/',ExportJSONView.as_view()),
+   path('categorylist/',CategoryList.as_view())
 ]

@@ -87,9 +87,9 @@ function UpdateAuctionForm({auction}){
             <TagForm ref={tagsRef} tags={auction.categories}/>
             <div className="col-sm-5">
                 <label htmlFor="auction-start_bid"> Starting Bid </label>
-                <div className="input-group" name="geo-location" id="auction-start_bid">
+                <div className="input-group" id="auction-start_bid">
                     <div className="input-group-text">$</div>
-                    <input type="number" placeholder="0.00" className="form-control no-spinbox" name="start_bid" defaultValue={auction.first_bid}/>
+                    <input type="number" placeholder="0.00" step="0.01" className="form-control no-spinbox" name="start_bid" defaultValue={auction.first_bid}/>
                 </div>
             </div>
             <label htmlFor="auction-location"> Location </label>

@@ -14,7 +14,7 @@ function Images({image_list}){
         if(image_list.length===1)
         {
             element_temp=( 
-                <img src={IMG_URL + "/" + image_list[0].image} class="card-img-top" alt="Auction"></img>
+                <img src={IMG_URL + "/" + image_list[0].image} className="card-img-top" alt="Auction"></img>
             );
         }
         else if(image_list.length>1){
@@ -24,32 +24,32 @@ function Images({image_list}){
             let i=0;
             for(let image of image_list){
                 indicators.push(
-                    <button type="button" data-bs-target="#carouselIndicators" data-bs-slide-to={i.toString()} class={(i===0 ? "active" : "")} aria-current={(i===0 ? "true" : "")} aria-label={"Slide" + (i+1).toString()}>
+                    <button type="button" data-bs-target="#carouselIndicators" data-bs-slide-to={i.toString()} className={(i===0 ? "active" : "")} aria-current={(i===0 ? "true" : "")} aria-label={"Slide" + (i+1).toString()}>
                     </button>
                 );
                 images.push(
-                    <div class={"carousel-item" +  (i===0 ? " active" : "")}>
-                        <img src={IMG_URL + "/" + image} class="card-img-top" alt={"Image" + (i+1).toString()}/>
+                    <div className={"carousel-item" +  (i===0 ? " active" : "")}>
+                        <img src={IMG_URL + "/" + image} className="card-img-top" alt={"Image" + (i+1).toString()}/>
                     </div>
                 )
                 i++;
             }
 
             element_temp=(
-                <div id="carouselIndicators" class="carousel slide" data-bs-ride="true">
-                    <div class="carousel-indicators">
+                <div id="carouselIndicators" className="carousel slide" data-bs-ride="true">
+                    <div className="carousel-indicators">
                         {indicators}
                     </div>
-                    <div class="carousel-inner">
+                    <div className="carousel-inner">
                         {images}
                     </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselIndicators" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
+                    <button className="carousel-control-prev" type="button" data-bs-target="#carouselIndicators" data-bs-slide="prev">
+                        <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span className="visually-hidden">Previous</span>
                     </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselIndicators" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
+                    <button className="carousel-control-next" type="button" data-bs-target="#carouselIndicators" data-bs-slide="next">
+                        <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span className="visually-hidden">Next</span>
                     </button>
                 </div>
             );
@@ -104,7 +104,7 @@ function AuctionPrice({start,current,num_bids,own_bid,status}){
     if(num_bids === 0){
         return(
             <>
-                Starts at: {start}$ <small class="text-muted" style={{margin:"1em"}}> {num_bids} bids</small>
+                Starts at: {start}$ <small className="text-muted" style={{margin:"1em"}}> {num_bids} bids</small>
             </>
         );
     }
@@ -112,16 +112,16 @@ function AuctionPrice({start,current,num_bids,own_bid,status}){
         if (status==='closed'){
             return(
                 <>
-                    Sold at: {current} $ {own_bid ? <span class="badge rounded-pill text-bg-success">Your bid</span> : null}
-                    <small class="text-muted" style={{margin:"1em"}}> {num_bids} bids</small>
+                    Sold at: {current} $ {own_bid ? <span className="badge rounded-pill text-bg-success">Your bid</span> : null}
+                    <small className="text-muted" style={{margin:"1em"}}> {num_bids} bids</small>
                 </>
             );
         }
 
         return(
             <>
-                Currently: {current} $ {own_bid ? <span class="badge rounded-pill text-bg-success">Your bid</span> : null}
-                <small class="text-muted" style={{margin:"1em"}}> {num_bids} bids</small>
+                Currently: {current} $ {own_bid ? <span className="badge rounded-pill text-bg-success">Your bid</span> : null}
+                <small className="text-muted" style={{margin:"1em"}}> {num_bids} bids</small>
             </>
         );
     }
@@ -178,7 +178,7 @@ function AuctionStatus({status}){
 
 function ExportAuction({auction_id}){
     const {exportJSON,exportXML} = useContext(RequestContext);
-    const {userInfo} = useContext(AuthContext);
+    const {authorized,userInfo} = useContext(AuthContext);
 
     function handleExportJSON(){
         exportJSON(auction_id)
@@ -228,15 +228,15 @@ function ExportAuction({auction_id}){
         });
     }
 
-    if(userInfo.is_staff===false) return null;
+    if(authorized===false || userInfo.is_staff===false) return null;
 
     return(
-        <div class="card-header">
+        <div className="card-header">
             <button type="button" className="btn btn-success btn-margin" onClick={handleExportJSON}>
-                <i class="bi bi-braces"></i> .json
+                <i className="bi bi-braces"></i> .json
             </button>
             <button type="button" className="btn btn-warning btn-margin" onClick={handleExportXML}> 
-                <i class="bi bi-code-slash"></i> .xml
+                <i className="bi bi-code-slash"></i> .xml
             </button>
         </div>
     );
@@ -246,14 +246,22 @@ function AuctionUsername({username}){
     const {userInfo} = useContext(AuthContext);
 
     return(
-        <p class="card-text">
-            <small class="text-muted">
-                    <i class="bi bi-person-fill bi-margin"/>
+        <p className="card-text">
+            <small className="text-muted">
+                    <i className="bi bi-person-fill bi-margin"/>
                     {username} 
                     {username===userInfo.username ? <span className="badge rounded-pill bg-secondary bg-small">You</span> : null}
             </small>
         </p>
     );
+}
+
+function NoAuctions(){
+    return(
+        <>
+            No auctions found.
+        </>
+    )
 }
 
 function AuctionList({auctions}){
@@ -263,19 +271,19 @@ function AuctionList({auctions}){
         const elements_temp=[]
         for (let auction of auctions){
             elements_temp.push(
-                <div class="card">
+                <div className="card">
                     {auction.images.length !== 0 ? <Images image_list={auction.images}/> : null}
                     <ExportAuction auction_id={auction.pk}/>
-                    <div class="card-body">
-                        <h5 class="card-title">{auction.name} <AuctionStatus status={auction.status}/></h5>
+                    <div className="card-body">
+                        <h5 className="card-title">{auction.name} <AuctionStatus status={auction.status}/></h5>
                         <AuctionUsername username={auction.seller_username}/>
-                        <p class="card-text"> <i class="bi bi-geo-alt-fill"></i> {auction.location},{auction.country}</p>
-                        <p class="card-text"> <AuctionPrice start={auction.first_bid} current={auction.current_bid} num_bids={auction.num_bids} own_bid={auction.own_bid} status={auction.status}/></p>
-                        <p class="card-text"><AuctionCategories categories={auction.categories}/></p>
-                        <a href={`/auction/${auction.pk}`} class="link-primary">View more</a>
+                        <p className="card-text"> <i className="bi bi-geo-alt-fill"></i> {auction.location},{auction.country}</p>
+                        <p className="card-text"> <AuctionPrice start={auction.first_bid} current={auction.current_bid} num_bids={auction.num_bids} own_bid={auction.own_bid} status={auction.status}/></p>
+                        <p className="card-text"><AuctionCategories categories={auction.categories}/></p>
+                        <a href={`/auction/${auction.pk}`} className="link-primary">View more</a>
                     </div>
-                    <div class="card-footer">
-                        <small class="text-muted"><AuctionDate starts={auction.started} ends={auction.ends} status={auction.status}/></small>
+                    <div className="card-footer">
+                        <small className="text-muted"><AuctionDate starts={auction.started} ends={auction.ends} status={auction.status}/></small>
                     </div>
                 </div>
             );
@@ -291,4 +299,4 @@ function AuctionList({auctions}){
     )
 }
 
-export {Images,AuctionDate,AuctionPrice,AuctionCategories,AuctionMap,AuctionStatus,AuctionList,AuctionUsername,ExportAuction}
+export {Images,AuctionDate,AuctionPrice,AuctionCategories,AuctionMap,AuctionStatus,AuctionList,AuctionUsername,ExportAuction,NoAuctions}

@@ -54,7 +54,7 @@ const TagForm = forwardRef((props, ref) => {
 
     return (
         <>
-            <label htmlFor="auction-categories"> Categories </label>
+            <label htmlFor="auction-categories"> Categories: </label>
             {elements}
             <input autoComplete="off" type="text" className="form-control" name="categories" id="auction-categories" placeholder="Enter or comma to add a new category" onKeyDown={keyPress}/>
         </>

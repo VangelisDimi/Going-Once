@@ -19,7 +19,8 @@ const RequestInfo = ({children}) => {
         deleteAuction: deleteAuction,
         exportJSON: exportJSON,
         exportXML: exportXML,
-        submitBid: submitBid
+        submitBid: submitBid,
+        getCategoryList: getCategoryList
     };
 
     return(
@@ -64,13 +65,31 @@ const RequestInfo = ({children}) => {
         return axios.post('/auctions/create/',data);
     }
 
-    function getAuctionNavigateList(page,items){
-        return axios.get('/auctions/getlistnavigate/',{
-            params: {
-                page: page,
-                items: items
+    function getAuctionNavigateList(page,items,categories,location,description,min_price,max_price,parent_category){
+        var params  = {
+            page: page,
+            items: items,
+            location: location,
+            description: description,
+            min_price: min_price,
+            max_price: max_price,
+            parent_category: parent_category
+        }
+        for(let key in params){
+            if(params[key]===null || params[key]===undefined) 
+                delete params[key]
+        }
+        params= new URLSearchParams(params).toString()
+
+        for(var category of categories){
+            if(params===''){
+                params = `category=${category}`
             }
-        })
+            params = params + `&category=${category}`
+        }
+        params= '?' + params
+
+        return axios.get('/auctions/getlistnavigate/' + params)
     }
 
     function getAuctionManageList(page,items){
@@ -139,6 +158,15 @@ const RequestInfo = ({children}) => {
         data.append("amount",event.target.amount.value);
 
         return axios.post('/auctions/addbid/',data);
+    }
+
+    function getCategoryList(page,items){
+        return axios.get('/auctions/categorylist/',{
+            params: {
+                page: page,
+                items: items
+            }
+        })
     }
 }
 

@@ -1,6 +1,3 @@
-from asyncio import FastChildWatcher
-from functools import partial
-from operator import truediv
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -178,17 +175,40 @@ class GetAuctionsManage(generics.ListAPIView):
         return self.get_paginated_response(data)
 
 class GetAuctionsNavigate(generics.ListAPIView):
-    queryset = Auction.objects.all().values('pk','name','first_bid','location','latitude','longitude','country',
-    'started','ends','description','seller_id').order_by('started')
+    queryset = Auction.objects.all().order_by('started')
 
     def list(self,request):
+        #Filter queryset
         now = datetime.now(pytz.UTC)
 
         auction_queryset = self.get_queryset().exclude(ends__lte=now)
         if request.user.is_authenticated:
             auction_queryset=auction_queryset.exclude(seller_id=request.user.pk)
-        auction_page = self.paginate_queryset(auction_queryset)
 
+        parent_category = request.GET.get('parent_category')
+        if parent_category:
+            auction_queryset = auction_queryset.filter(category__name=parent_category)
+        categories = request.GET.getlist('category')
+        if len(categories) > 0:
+            auction_queryset = auction_queryset.filter(category__name__in=categories).distinct()
+        location = request.GET.get('location')
+        if location:
+            auction_queryset= auction_queryset.filter(location=location)
+        description =request.GET.get('description')
+        if description:
+            auction_queryset=auction_queryset.filter(description=description)
+        min_price = request.GET.get('min_price')
+        max_price = request.GET.get('max_price')
+        filtered = auction_queryset
+        for object in auction_queryset:
+            if min_price and not (object.get_current_bid()>=int(min_price)):
+                filtered = filtered.exclude(pk=object.pk)
+            elif max_price and not  (object.get_current_bid()<=int(max_price)):
+                filtered = filtered.exclude(pk=object.pk)
+
+        #Create response
+        auction_page = self.paginate_queryset(filtered.values('pk','name','first_bid','location','latitude','longitude','country',
+        'started','ends','description','seller_id'))
         data = list(auction_page)
         for item in data:
             auction = Auction.objects.get(pk=item['pk'])
@@ -226,3 +246,10 @@ class DeleteAuction(APIView):
         auction.delete()
 
         return Response(status=status.HTTP_200_OK)
+
+class CategoryList(generics.ListAPIView):
+    queryset = Category.objects.all().values('pk','name').order_by('name')
+
+    def list(self,request):
+        response = self.paginate_queryset(self.get_queryset())
+        return self.get_paginated_response(response)

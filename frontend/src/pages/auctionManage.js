@@ -1,7 +1,7 @@
 import { useEffect,useContext,useState } from 'react';
 import {useNavigate,useSearchParams} from 'react-router-dom';
 import RequestContext from '../requests';
-import {AuctionList} from '../components/auctions'
+import {AuctionList,NoAuctions} from '../components/auctions'
 import {NavigatePages} from '../components/pagination'
 
 function CreationButton(){
@@ -32,7 +32,7 @@ function AuctionManage(){
         <>
             <CreationButton/>
             {page ? <NavigatePages pages={page.total_pages} current={page.current} params={searchParams} setParams={setSearchParams}/> : null}
-            {page ? <AuctionList auctions={page.results}/> : null}
+            {page && page.results.length>0 ? <AuctionList auctions={page.results}/> : <NoAuctions/>}
             {page ? <NavigatePages pages={page.total_pages} current={page.current} params={searchParams} setParams={setSearchParams}/> : null}
         </>
     );
