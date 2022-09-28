@@ -22,6 +22,9 @@ class BaseUser(AbstractUser):
 class AppUser(BaseUser):
     class Meta:
         pass
+    def get_rating(self):
+        # To-do : implement user rating
+        return 0
     
     #Added
     phone_number = models.CharField(max_length=50,blank=False)

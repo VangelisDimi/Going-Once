@@ -8,7 +8,7 @@ import Tabs from 'react-bootstrap/Tabs';
 
 function AdminList() {
     const {getAdminList,approveUser} = useContext(RequestContext);
-    const [searchParams, setSearchParams] = useSearchParams({});
+    const [searchParams, setSearchParams] = useState(new URLSearchParams());
     const [data,setData] = useState({results:[]});
     const[listItems,setListItems] = useState();
 
@@ -89,7 +89,7 @@ function AdminList() {
 
 function UserList() {
     const {getUserList,approveUser} = useContext(RequestContext);
-    const [searchParams, setSearchParams] = useSearchParams({});
+    const [searchParams, setSearchParams] = useSearchParams(new URLSearchParams());
     const [data,setData] = useState({results:[]});
     const[listItems,setListItems] = useState();
 

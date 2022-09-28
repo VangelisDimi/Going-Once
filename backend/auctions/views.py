@@ -50,12 +50,37 @@ class ExportXMLView(APIView):
     
     def get(self,request):
         id = request.GET.get('id')
+        auction = Auction.objects.get(pk=id)
+        auction_categories = auction.category.all()
+        auction_bids = Bid.objects.filter(auction=auction)
 
-        root = ET.Element("Item", ItemID="1")
-        doc = ET.SubElement(root, "doc")
+        root = ET.Element("Item", ItemID=str(auction.pk))
+        ET.SubElement(root, "Name").text = auction.name
+        for category in auction_categories:
+            ET.SubElement(root, "Category").text = category.name
 
-        ET.SubElement(doc, "field1", name="blah").text = "some value1"
-        ET.SubElement(doc, "field", name="asdfasd").text = "some vlaue2"
+        ET.SubElement(root, "Currently").text = "$"+str(auction.get_current_bid())
+        ET.SubElement(root,"First_Bid").text = "$"+str(auction.first_bid)
+        ET.SubElement(root,"Number_of_Bids").text = str(auction_bids.count())
+
+        bids = ET.SubElement(root, "Bids")
+        for auction_bid in auction_bids:
+            auction_bidder = auction_bid.bidder
+
+            bid = ET.SubElement(bids, "Bid")
+            bidder = ET.SubElement(bid, "Bidder", Rating=str(auction_bidder.get_rating()), UserId=auction_bidder.username)
+            ET.SubElement(bidder,"Location").text = auction_bidder.location
+            ET.SubElement(bidder,"Country").text = auction_bidder.country
+            
+            ET.SubElement(bid,"Time").text = str(auction_bid.time)
+            ET.SubElement(bid,"Amount").text = "$"+str(auction_bid.amount)
+
+        ET.SubElement(root, "Location").text = auction.location
+        ET.SubElement(root, "Country").text = auction.country
+        ET.SubElement(root, "Started").text = str(auction.started)
+        ET.SubElement(root, "Ends").text = str(auction.ends)
+        ET.SubElement(root,"Seller",Rating=str(auction.seller.get_rating()),UserID=auction.seller.username)
+        ET.SubElement(root,"Description").text = auction.description
 
         return Response(root,content_type='application/xml')
 
@@ -82,17 +107,35 @@ class ExportJSONView(APIView):
             categories.append(category.name)
         item['Categories'] = categories
 
-        item['Currently'] = auction.get_current_bid()
+        item['Currently'] = "$"+str(auction.get_current_bid())
         item['First_Bid'] = "$"+str(auction.first_bid)
         item['Number_of_Bids'] = auction_bids.count()
         
-        for bid in bids:
-            bidder = bid.bidder
-            pass
+        for auction_bid in auction_bids:
+            bid = {}
+            auction_bidder = auction_bid.bidder
+            bidder = {}
+            bidder['Rating']=auction_bidder.get_rating()
+            bidder['UserID']=auction_bidder.username
+            bidder['Location']=auction_bidder.location
+            bidder['Country']=auction_bidder.country
+            bid['Bidder']=bidder
+            bid['Time']=str(auction_bid.time)
+            bid['Amount']="$"+str(auction_bid.amount)
+
+            bids.append(bid)
         item['Bids'] = bids
 
         item['Location'] = auction.location
         item['Country']  = auction.country
+        item['Started'] = str(auction.started)
+        item['Ends'] = str(auction.ends)
+
+        seller = {}
+        seller['Rating'] = auction.seller.get_rating()
+        seller['UserID'] = auction.seller.username
+        item['Seller'] = seller
+
         item['Description'] = auction.description
 
         data['Item'] = item
