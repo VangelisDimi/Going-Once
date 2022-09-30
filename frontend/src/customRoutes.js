@@ -1,42 +1,57 @@
 import { Navigate } from 'react-router-dom'
-import { useContext } from 'react'
-import {NoPermission} from './pages/errors'
+import { useContext} from 'react'
+import {NoPermission,NotApproved} from './pages/errors'
 import AuthContext from './auth'
 
+//Different components on same route based on authentication
 const SharedComponent = ({private_page,public_page}) => {
-    const {authorized,userInfo} = useContext(AuthContext);
+    const {authorized} = useContext(AuthContext);
     
     return(
-        authorized && userInfo.is_approved ? private_page : public_page
-    )
+        authorized ? private_page : public_page
+    );
 }
 
+//Route that can only be accesed if logged out
 const PublicRoute = ({children,redirect="/"}) => {
     const {authorized} = useContext(AuthContext);
     
     return(
         !authorized ? children : <Navigate  to={redirect} />
-    )
+    );
 }
 
+//Route than can only be accesed by admin
 const AdminRoute = ({children}) => {
-    const {userInfo} = useContext(AuthContext);
+    const {authorized,userInfo} = useContext(AuthContext);
 
     return(
-        userInfo.is_staff && userInfo.is_approved ? children : <NoPermission/>
-    )
+        authorized && userInfo.is_staff ? <ApprovedRoute children={children}/> : <NoPermission/>
+    );
 }
 
+//Route that can only be accesed by user
 const UserRoute= ({children}) => {
-    const {userInfo} = useContext(AuthContext);
+    const {authorized,userInfo} = useContext(AuthContext);
 
     return(
-        !userInfo.is_staff ? children : <NoPermission/>
-    )
+        authorized && !userInfo.is_staff ? <ApprovedRoute children={children}/> : <NoPermission/>
+    );
 }
 
 const PrivateRoute = ({children}) => {
     
 }
 
-export {SharedComponent,PublicRoute,AdminRoute,UserRoute};
+//Route that can only be accesed by logged in users
+const ApprovedRoute = ({children})=> {
+    const {authorized,userInfo} = useContext(AuthContext);
+
+    if(!authorized) return children;
+    
+    return(
+        authorized && userInfo.is_approved ? children : <NotApproved/>
+    );
+}
+
+export {SharedComponent,PublicRoute,AdminRoute,UserRoute,ApprovedRoute};

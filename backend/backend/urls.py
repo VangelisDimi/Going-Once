@@ -18,7 +18,10 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+from .views import PingServer
+
 urlpatterns = [
+    path('pingserver/',PingServer.as_view()),
     path('admin/', admin.site.urls),
     path('users/', include('users.urls')),
     path('auctions/', include('auctions.urls')),

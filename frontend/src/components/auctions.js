@@ -228,7 +228,7 @@ function ExportAuction({auction_id}){
         });
     }
 
-    if(authorized===false || userInfo.is_staff===false) return null;
+    if(authorized===false || userInfo.is_staff===false || userInfo.is_approved===false) return null;
 
     return(
         <div className="card-header">
@@ -271,7 +271,7 @@ function AuctionList({auctions}){
         const elements_temp=[]
         for (let auction of auctions){
             elements_temp.push(
-                <div className="card">
+                <div className="card" key={auction.pk}>
                     {auction.images.length !== 0 ? <Images image_list={auction.images}/> : null}
                     <ExportAuction auction_id={auction.pk}/>
                     <div className="card-body">

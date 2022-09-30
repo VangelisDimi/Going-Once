@@ -3,11 +3,13 @@ import  {axios} from './axios_config'
 
 const AuthContext = createContext();
 
+//Handles authentication
 const AuthInfo = ({children}) => {
     const [token, setToken] = useState(() => localStorage.getItem('token') ? localStorage.getItem('token') : null);
     const [authorized,setAuthorized] = useState(token ? true : false);
     const [userInfo,setUserInfo] = useState([]);
     const [loading,setLoading] = useState(true);
+    const [connection,setConnection] = useState(true);
 
     const contextData = {
         authorized: authorized,
@@ -29,18 +31,36 @@ const AuthInfo = ({children}) => {
             },
         });
 
-        if(token){
+        axios.get('pingserver/')
+        .catch(function(error) {
+            setConnection(false);
+        })
+
+        if(token && connection){
             axios_priv.get('users/get/')
             .then(res => {
                 setUserInfo(JSON.parse(JSON.stringify(res.data)));
+            })
+            .catch(function (error) {
+                if (error.response) {
+                    if (error.response.status === 401){//Unauthorized
+                        logout();
+                    }
+                }
             });
         }
+
         setLoading(false);
     },[token]);
 
+
     return(
         <AuthContext.Provider value={contextData}>
-            {!loading ? children : null}
+            {connection ?
+                (!loading ? children : null)
+                :
+                <>Couldn't establish connection to the server :(</>
+            }
         </AuthContext.Provider>
     );
 
@@ -62,24 +82,6 @@ const AuthInfo = ({children}) => {
             localStorage.setItem('token', res.data.token);
             setAuthorized(true);
         })
-        .catch(function (error) {
-            if (error.response) {
-                // The request was made and the server responded with a status code
-                // that falls out of the range of 2xx
-                console.log(error.response.data);
-                console.log(error.response.status);
-                console.log(error.response.headers);
-            } else if (error.request) {
-                // The request was made but no response was received
-                // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-                // http.ClientRequest in node.js
-                console.log(error.request);
-            } else {
-                // Something happened in setting up the request that triggered an Error
-                console.log('Error', error.message);
-            }
-            console.log(error.config);
-        });
     };
 
     function adminSignup(event) {
@@ -106,10 +108,7 @@ const AuthInfo = ({children}) => {
             data.append("tin",event.target.tin.value)
         }
 
-        axios.post(url,data)
-        .then(res => {
-            console.log(res);
-        })
+        return axios.post(url,data);
     };
 
     function logout() {
@@ -119,30 +118,19 @@ const AuthInfo = ({children}) => {
             }
         })
         .then(res => {
-            console.log(res);
+            setToken(null);
+            setAuthorized(false);
+            setUserInfo([]);
+            localStorage.removeItem('token');
         })
         .catch(function (error) {
-            if (error.response) {
-            // The request was made and the server responded with a status code
-            // that falls out of the range of 2xx
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
-            } else if (error.request) {
-            // The request was made but no response was received
-            // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-            // http.ClientRequest in node.js
-            console.log(error.request);
-            } else {
-            // Something happened in setting up the request that triggered an Error
-            console.log('Error', error.message);
+            if (error.response && error.response.status!==0) {
+                setToken(null);
+                setAuthorized(false);
+                setUserInfo([]);
+                localStorage.removeItem('token');
             }
-            console.log(error.config);
-        });
-
-        setToken(null);
-        setAuthorized(false);
-        localStorage.removeItem('token');
+        })
     };
 }
 

@@ -25,38 +25,33 @@ function SignupForm({setSuccess}){
 
     return(
         <form onSubmit={HandleSubmit}>
-            <label>
+            <label className='required'>
                 Username
-                <input placeholder="Username" type="text" name='username' required/>
-                <br></br>
             </label>
-            <label>
+            <input className="form-control" placeholder="Username" type="text" name='username' required/>
+            <label className='required'>
                 Password
-                <input placeholder="Password" type="password" name='password' required minLength="8"/>
-                <br></br>
             </label>
-            <label>
+            <input className="form-control" placeholder="Password" type="password" name='password' required minLength="8"/>
+            <label className='required'>
                 Confirm password
-                <input placeholder="Confirm password" type="password" name='confirm_password' required minLength="8"/>
-                <br></br>
             </label>
-            <label>
+            <input className="form-control" placeholder="Confirm password" type="password" name='confirm_password' required minLength="8"/>            
+            <label className='required'>
                 First name
-                <input placeholder="First name" type="text" name='first_name' required/>
-                <br></br>
             </label>
-            <label>
+            <input className="form-control" placeholder="First name" type="text" name='first_name' required/>
+            <label className='required'>
                 Last name
-                <input placeholder="Last name" type="text" name='last_name' required/>
-                <br></br>
             </label>
-            <label>
+            <input className="form-control" placeholder="Last name" type="text" name='last_name' required/>
+            <label className='required'>
                 E-mail
-                <input placeholder="E-mail" type="text" name='email' required/>
-                <br></br>
             </label>
+            <input className="form-control" placeholder="E-mail" type="email" name='email' required/>
+
             <div>
-                <button type="submit">Sign-Up</button>
+                <button className="btn btn-primary" type="submit">Sign-Up</button>
             </div>
         </form>
     );
@@ -76,6 +71,7 @@ function AdminSignup() {
     return(
         <div>
             <BackButton/>
+            <h3>Register</h3>
             <SignupForm setSuccess={setSuccess}/>
         </div>
     );

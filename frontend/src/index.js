@@ -7,7 +7,7 @@ import './style.css'
 
 import {AuthInfo} from './auth';
 import {RequestInfo} from './requests';
-import {SharedComponent,PublicRoute,AdminRoute,UserRoute} from './customRoutes'
+import {SharedComponent,PublicRoute,AdminRoute,UserRoute,ApprovedRoute} from './customRoutes'
 
 import Welcome from './pages/welcome';
 import Signup from './pages/signup';
@@ -34,19 +34,14 @@ function App()
                 <Routes>
                     {/* User Page */}
                     <Route
-                        path="/" element={<> <DashBoard/> <Outlet /> </>}
+                        path="/" element={<> <DashBoard/> <Outlet/> </>}
                     >
                         <Route
                             exact path="/"
-                            element = {<SharedComponent private_page={<Main/>} public_page={<Welcome/>}/>}
+                            element = {<SharedComponent private_page={<ApprovedRoute><Main/></ApprovedRoute>} public_page={<Welcome/>}/>}
                         />
                         <Route path="/signup" element={<PublicRoute children={<Signup />}/>} />
-                        <Route path="/manage" element=
-                            {<SharedComponent
-                                private_page={<UserRoute children={<Outlet/>}/>}
-                                public_page={<NoPermission/>}
-                            />}
-                        >
+                        <Route path="/manage" element={<UserRoute children={<Outlet/>}/>}>
                             <Route exact path="/manage" element={<AuctionManage/>} />
                             <Route path="/manage/create" element={<CreateAuction/>} />
                         </Route>

@@ -24,81 +24,86 @@ function SignupForm({setSuccess}){
 
     return(
         <form onSubmit={HandleSubmit}>
-            <label>
+            <label className='required'>
                 Username
-                <input placeholder="Username" type="text" name='username' required/>
-                <br></br>
             </label>
-            <label>
+            <input className="form-control" placeholder="Username" type="text" name='username' required/>
+            <div className="invalid-feedback" id="invalid-username">
+                Wrong username
+            </div>
+            <label className='required'>
                 Password
-                <input placeholder="Password" type="password" name='password' required minLength="8"/>
-                <br></br>
             </label>
-            <label>
+            <input className="form-control" placeholder="Password" type="password" name='password' required minLength="8"/>
+            <label className='required'>
                 Confirm password
-                <input placeholder="Confirm password" type="password" name='confirm_password' required minLength="8"/>
-                <br></br>
             </label>
-            <label>
+            <input className="form-control" placeholder="Confirm password" type="password" name='confirm_password' required minLength="8"/>
+            <label className='required'>
                 First name
-                <input placeholder="First name" type="text" name='first_name' required/>
-                <br></br>
             </label>
-            <label>
+            <input className="form-control" placeholder="First name" type="text" name='first_name' required/>
+            <label className='required'>
                 Last name
-                <input placeholder="Last name" type="text" name='last_name' required/>
-                <br></br>
             </label>
-            <label>
+            <input className="form-control" placeholder="Last name" type="text" name='last_name' required/>
+            <label className='required'>
                 E-mail
-                <input placeholder="E-mail" type="text" name='email' required/>
-                <br></br>
             </label>
-            <label>
+            <input className="form-control" placeholder="E-mail" type="email" name='email' required/>
+            <label className='required'>
                 Phone Number
-                <input placeholder="Phone Number" type="text" name='phone' required/>
-                <br></br>
             </label>
-            <label>
+            <input className="form-control" placeholder="Phone Number" type="text" name='phone' required/>
+            <label className='required'>
                 Street name
-                <input placeholder="Street name" type="text" name='street_name' required/>
-                <br></br>
             </label>
-            <label>
+            <input className="form-control" placeholder="Street name" type="text" name='street_name' required/>
+            <label className='required'>
                 Street number
-                <input placeholder="Street number" type="text" name='street_number' required/>
-                <br></br>
             </label>
-            <label>
+            <input className="form-control" placeholder="Street number" type="text" name='street_number' required/>
+            <label className='required'>
                 Postal code
-                <input placeholder="Postal code" type="text" name='postal_code' required/>
-                <br></br>
             </label>
-            <label>
+            <input className="form-control" placeholder="Postal code" type="text" name='postal_code' required/>
+            <label className='required'>
                 Country
-                <input placeholder="Country" type="text" name='country' required/>
-                <br></br>
             </label>
-            <label>
+            <input className="form-control" placeholder="Country" type="text" name='country' required/>
+            <label className='required'>
                 Location
-                <input placeholder="Location" type="text" name='location' required/>
-                <br></br>
             </label>
-            <label>
+            <input className="form-control" placeholder="Location" type="text" name='location' required/>
+            <label className='required'>
                 TIN
-                <input placeholder="TIN" type="text" name='tin' required/>
-                <br></br>
             </label>
+            <input className="form-control" placeholder="TIN" type="text" name='tin' required/>
+
             <div>
-                <button type="submit">Sign-Up</button>
+                <button className="btn btn-primary" type="submit">Sign-Up</button>
             </div>
         </form>
     );
 
     function HandleSubmit(event){
         event.preventDefault();
-        signup(event);
-        setSuccess(true);
+        signup(event)
+        .then(res => {
+            setSuccess(true);
+        })
+        .catch((error) => {
+            if (error.response) {
+                // The request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+                if(error.response.data.username){
+                    event.target.username.className = "form-control is-invalid"
+                }
+                console.log(error.response.data);
+                console.log(error.response.status);
+                console.log(error.response.headers);
+            }
+        });
     };
 }
 
@@ -109,6 +114,7 @@ function Signup(){
 
     return(
         <div>
+            <h3>Register</h3>
             <SignupForm setSuccess={setSuccess}/>
         </div>
     );

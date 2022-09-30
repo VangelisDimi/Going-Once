@@ -16,8 +16,8 @@ function NoPermission(){
 
 function NotApproved(){
     return(
-        <div>
-            You haven't been approved by an admin yet.
+        <div class="alert alert-danger" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i> You haven't been approved by an admin yet.
         </div>
     );
 }

@@ -10,7 +10,7 @@ function CategoryList({categories}){
         const elements_temp=[]
         for (let category of categories){
             elements_temp.push(
-                <div className="card">
+                <div className="card" key={category.name}>
                     <a href={`/navigate/categories/${category.name}`} className="list-group-item list-group-item-action">{category.name}</a>
                 </div>
             );

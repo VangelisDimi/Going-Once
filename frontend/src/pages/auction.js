@@ -1,7 +1,7 @@
 import { useEffect,useContext,useState} from 'react';
 import {useParams,useNavigate,useLocation} from 'react-router-dom';
 import RequestContext from '../requests';
-import {NotFound} from './errors';
+import {NotFound,NoPermission} from './errors';
 import {Images,AuctionPrice,AuctionCategories,AuctionDate,AuctionMap,AuctionStatus,AuctionUsername,ExportAuction} from '../components/auctions'
 import UpdateAuction from './auctionUpdate';
 import AuthContext from '../auth';
@@ -137,7 +137,7 @@ function Auction(){
     const [auction,setAuction] = useState();
     const [loading,setLoading] = useState(true);
     const location = useLocation().pathname;
-    const {userInfo} = useContext(AuthContext);
+    const {authorized,userInfo} = useContext(AuthContext);
 
     useEffect(() => {
         setLoading(true);
@@ -153,11 +153,17 @@ function Auction(){
 
 
     if(location.endsWith('/edit')){
-        return(
-            <>
-                <UpdateAuction auction={auction}/>
-            </>
-        );
+        if(auction.own_auction){
+            return(
+                <>
+                    <UpdateAuction auction={auction}/>
+                </>
+            );
+        }
+        else
+        { 
+            return <NoPermission/>
+        }
     }
     return(
         <>
@@ -173,7 +179,7 @@ function Auction(){
                     <p className="card-text"><AuctionCategories categories={auction.categories}/></p>
                     {auction.own_auction ? <EditButtons status={auction.status} num_bids={auction.num_bids}/> : null}
                     <h6 className="card-text"> <AuctionPrice start={auction.first_bid} current={auction.current_bid} num_bids={auction.num_bids} own_bid={auction.own_bid} status={auction.status}/></h6>
-                    {!auction.own_auction && !userInfo.is_staff ? <SubmitBid auction_id={auction.pk} status={auction.status}/> : null}
+                    {authorized && !auction.own_auction && !userInfo.is_staff && userInfo.is_approved ? <SubmitBid auction_id={auction.pk} status={auction.status}/> : null}
                     {(auction.own_auction || userInfo.is_staff) && auction.bids.length>0 ? <BidList bids={auction.bids}/> : null}
                 </div> 
                 <div className="card-footer">

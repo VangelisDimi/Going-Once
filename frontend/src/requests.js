@@ -4,6 +4,7 @@ import moment from 'moment'
 
 const RequestContext = createContext();
 
+//Handles requests
 const RequestInfo = ({children}) => {
     const axios = AxiosPrivate();
 

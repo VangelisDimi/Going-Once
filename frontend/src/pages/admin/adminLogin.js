@@ -5,7 +5,7 @@ import AuthContext from '../../auth';
 function SignupButton(){
     const navigate = useNavigate();
     return(
-        <button type="button" onClick={() => navigate("/admin/signup")}>Signup</button>
+        <button className='btn btn-secondary' type="button" onClick={() => navigate("/admin/signup")}>Signup</button>
     );
 }
 
@@ -16,17 +16,14 @@ function LoginField(){
         <form onSubmit={handleSubmit}> 
             <label>
                 Username
-                <input placeholder="Username" type="text" name="username" required/>
-                <br></br>
             </label>
+            <input className='form-control' placeholder="Username" type="text" name="username" required/>
             <label>
                 Password
-                <input placeholder="Password" type="password" name="password" required/>
-                <br></br>
             </label>
-            <div>
-                <button type="submit">Log-In</button>
-            </div>
+            <input className='form-control' placeholder="Password" type="password" name="password" required/>
+
+            <button className='btn btn-primary' type="submit">Log-In</button>
         </form>
     );
 

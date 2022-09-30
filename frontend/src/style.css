@@ -18,3 +18,9 @@
 .no-spinbox {
     -moz-appearance:textfield; /* Firefox */
 }
+
+label.required:after {
+    content:"*";
+    color:red;
+    margin: 0.10em;
+}

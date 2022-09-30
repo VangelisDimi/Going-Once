@@ -4,7 +4,24 @@ import AuthContext from '../auth';
 
 
 function LoginDropDown(){
-    
+    const location = useLocation().pathname;
+
+    if (location.startsWith("/admin")) return null;
+
+    return(
+        <ul className="navbar-nav">
+            <li className="nav-item dropdown">
+            <a className="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                User
+            </a>
+            <ul className="dropdown-menu">
+                <LoginField/>
+                <li><hr className="dropdown-divider"/></li>
+                <SignupButton/>
+            </ul>
+            </li>
+        </ul>
+    );
 }
 
 function SignupButton(){
@@ -14,18 +31,15 @@ function SignupButton(){
     if (location.startsWith("/admin")) return null;
 
     return(
-        <button className="btn btn-outline-secondary" type="button" onClick={() => navigate("/signup")}>Signup</button>
+        <button className="dropdown-item" type="button" onClick={() => navigate("/signup")}>Signup</button>
     );
 }
 
 function LoginField(){
-    const location = useLocation().pathname;
     const {login} = useContext(AuthContext);
 
-    if (location.startsWith("/admin")) return null;
-
     return (
-        <form className='form-inline' onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}>
                 <div className="form-group">
                 <label htmlFor="login-username"> Username </label>
                 <input className="form-control form-control-sm" placeholder="Username" type="text" name="username" id="login-username" required/>
@@ -66,11 +80,15 @@ function NavbarItems(){
 
         return(
             <ul className="navbar-nav">
-                <li className="nav-item">
-                    <NavLink to='/admin/usermanage' className={"nav-link" + (location.startsWith("/admin/usermanage")? " active" : "")}>
-                            Manage Users
-                    </NavLink>
-                </li>
+                {userInfo.is_approved ?
+                    <li className="nav-item">
+                        <NavLink to='/admin/usermanage' className={"nav-link" + (location.startsWith("/admin/usermanage")? " active" : "")}>
+                                Manage Users
+                        </NavLink>
+                    </li>
+                    :
+                    null
+                }
                 <li className="nav-item">
                     <a className="nav-link" href='/'>
                         Main Page
@@ -88,7 +106,7 @@ function NavbarItems(){
                             Navigate
                 </NavLink>
             </li>
-            {authorized && !userInfo.is_staff ?
+            {authorized && !userInfo.is_staff && userInfo.is_approved ?
                 <li className="nav-item">
                     <NavLink to='/manage' className={"nav-link" + (location.startsWith("/manage") ? " active" : "")}>
                             Manage
@@ -128,14 +146,14 @@ function UserDropDown(){
     return(
         <ul className="navbar-nav">
             <li className="nav-item dropdown">
-            <a className="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <a className="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 {userInfo.username}
                     &thinsp;
                 {userInfo.is_staff ? <span className="badge bg-secondary">Admin</span> : null}
             </a>
-            <ul className="dropdown-menu" aria-labelledby="navbarDarkDropdownMenuLink">
-                <li><hr className="dropdown-divider"/></li>
-                <LogoutButton/>
+            <ul className="dropdown-menu">
+                    <li><hr className="dropdown-divider"/></li>
+                    <LogoutButton/>
             </ul>
             </li>
         </ul>
@@ -148,22 +166,11 @@ function DashBoard(){
 
     if(location.startsWith("/admin") && authorized && !userInfo.is_staff) return null;
 
-    if(authorized && !userInfo.is_approved){ 
-        return(
-            <nav className="navbar navbar-expand-lg navbar-light bg-light">
-                <NavBarLogo/>
-                <UserDropDown/>
-            </nav>
-        );
-    }
-
     return(
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <NavBarLogo/>
             <NavbarItems/>
-            {authorized ? <UserDropDown/> : null}
-            {!authorized ? <LoginField/> : null}
-            {!authorized && !(location==="/signup") ? <SignupButton/> : null}
+            {authorized ? <UserDropDown/> : <LoginDropDown/>}
         </nav>
     );
 }

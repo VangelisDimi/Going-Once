@@ -36,7 +36,7 @@ class RegisterView(APIView):
         return Response(status=status.HTTP_201_CREATED)
 
 class PersonalUserInfoView(APIView):
-    permission_classes = [IsAuthenticated & (IsAppUser | IsAdmin) & IsApproved]
+    permission_classes = [IsAuthenticated & (IsAppUser | IsAdmin)]
 
     def get(self,request):
         base_user = BaseUser.objects.get(pk=request.user.pk)
