@@ -1,7 +1,7 @@
 import {useContext} from 'react';
 import { useNavigate,useLocation,NavLink } from 'react-router-dom';
 import AuthContext from '../auth';
-
+import {ModalError} from './errors';
 
 function LoginDropDown(){
     const location = useLocation().pathname;
@@ -63,10 +63,16 @@ function LoginField(){
 function LogoutButton(){
     const {logout} = useContext(AuthContext);
 
+    function handleLogout(event){
+        logout()
+    }
+
     return (
-        <button type="button" className="dropdown-item" onClick={logout}>
-            Logout
-        </button>
+        <>
+            <button type="button" className="dropdown-item" onClick={handleLogout}>
+                Logout
+            </button>
+        </>
     );
 }
 
@@ -167,11 +173,15 @@ function DashBoard(){
     if(location.startsWith("/admin") && authorized && !userInfo.is_staff) return null;
 
     return(
+        <>
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
             <NavBarLogo/>
             <NavbarItems/>
             {authorized ? <UserDropDown/> : <LoginDropDown/>}
         </nav>
+
+        {authorized ? <ModalError/> : null}
+        </>
     );
 }
 

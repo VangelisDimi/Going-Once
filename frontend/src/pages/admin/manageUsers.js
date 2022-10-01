@@ -3,9 +3,6 @@ import {useSearchParams} from 'react-router-dom';
 import RequestContext from '../../requests'
 import {NavigatePages} from '../../components/pagination'
 
-import Tab from 'react-bootstrap/Tab';
-import Tabs from 'react-bootstrap/Tabs';
-
 function AdminList() {
     const {getAdminList,approveUser} = useContext(RequestContext);
     const [searchParams, setSearchParams] = useState(new URLSearchParams());
@@ -184,16 +181,18 @@ function UserList() {
 function ManageUsers() {
     return(
         <>
-        <Tabs
-            defaultActiveKey="users"
-        >
-            <Tab eventKey="users" title="Users">
-                <UserList />
-            </Tab>
-            <Tab eventKey="admins" title="Admins">
-                <AdminList />
-            </Tab>
-        </Tabs>
+        <ul className="nav nav-tabs" role="tablist">
+            <li className="nav-item" role="presentation">
+                <button className="nav-link active" data-bs-toggle="tab" data-bs-target="#users-tab-pane" type="button" role="tab" aria-controls="users-tab-pane" aria-selected="true">Users</button>
+            </li>
+            <li className="nav-item" role="presentation">
+                <button className="nav-link" data-bs-toggle="tab" data-bs-target="#admins-tab-pane" type="button" role="tab" aria-controls="admins-tab-pane" aria-selected="false">Admins</button>
+            </li>
+        </ul>
+        <div className="tab-content">
+                <div className="tab-pane fade show active" id="users-tab-pane" role="tabpanel" aria-labelledby="users-tab" tabIndex="0"><UserList/></div>
+                <div className="tab-pane fade" id="admins-tab-pane" role="tabpanel" aria-labelledby="admins-tab" tabIndex="0"><AdminList/></div>
+        </div>
         </>
     );
 }

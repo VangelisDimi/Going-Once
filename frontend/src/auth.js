@@ -1,5 +1,6 @@
 import {useEffect,createContext,useState} from 'react';
 import  {axios} from './axios_config'
+import Modal from  'bootstrap/js/dist/modal'
 
 const AuthContext = createContext();
 
@@ -129,6 +130,10 @@ const AuthInfo = ({children}) => {
                 setAuthorized(false);
                 setUserInfo([]);
                 localStorage.removeItem('token');
+            }
+            else{
+                const myModal = new Modal(document.getElementById('Modal'));
+                myModal.show();
             }
         })
     };

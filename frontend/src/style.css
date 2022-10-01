@@ -24,3 +24,7 @@ label.required:after {
     color:red;
     margin: 0.10em;
 }
+
+.alert.hide {
+    visibility: hidden;
+}

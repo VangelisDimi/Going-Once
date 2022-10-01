@@ -2,8 +2,7 @@ import os
 from django.db import models
 from users.models import AppUser
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.core.exceptions import ValidationError
-from django.utils.translation import gettext_lazy as _
+from rest_framework import serializers
 from datetime import datetime
 import pytz
 
@@ -48,23 +47,20 @@ class Auction(models.Model):
                 return "closed"
 
     def clean(self):
-        now = datetime.now(pytz.UTC)
+        errors = dict()
 
+        now = datetime.now(pytz.UTC)
         difference = self.started - now
         if (difference.total_seconds()/60) < -5:
-            raise ValidationError(
-                {'started': _("Auction can't start earlier than now.")}
-            )
+            errors['started'] = "Auction can't start earlier than now."
 
         difference=self.ends-self.started
         if difference.total_seconds()<0:
-            raise ValidationError(
-                {'ends': _("End date can't be before start date.")}
-            )
-        if (difference.total_seconds()/3600)<1:
-            raise ValidationError(
-                {'started,ends': _("Auction can't last less than one hour.")}
-            )       
+            errors['ends'] = "End date can't be before start date."
+        if (difference.total_seconds()/3600)<1 and (difference.total_seconds()/3600)>0:
+            errors['started,ends']= "Auction can't last less than one hour."
+        if errors:
+            raise serializers.ValidationError(errors)
 
     def save(self, *args, **kwargs):
         self.full_clean()

@@ -1,0 +1,6 @@
+Django
+django_rest_knox
+djangorestframework
+knox
+lxml
+pytz

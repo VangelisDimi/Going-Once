@@ -1,5 +1,4 @@
-from asyncore import write
-from pyexpat import model
+from distutils.log import error
 from rest_framework import serializers
 from .models import Auction,AuctionImage,Category,Bid
 
@@ -29,14 +28,19 @@ class BidSerializer(serializers.ModelSerializer):
         instance.time = now
 
         auction=Auction.objects.get(pk=auction_id)
+
+        errors = dict()
         if instance.amount <= auction.get_current_bid():
-            raise serializers.ValidationError(
-                "Bid must be higher than current bid."
-            )
+            errors['bid'] = "Bid must be higher than current bid."
         if instance.bidder.pk == auction.get_current_bidder_id():
-            raise serializers.ValidationError(
-                "You can't bid two times in a row."
-            )
+            if errors['bid']:
+                errors['bid'] = [errors['bid']]
+                errors['bid'].append("You can't bid two times in a row.")
+            else:
+                errors['bid'] = "You can't bid two times in a row."
+        if errors:
+            raise serializers.ValidationError(errors)
+
         instance.save()
         return instance
 
@@ -72,10 +76,12 @@ class AuctionSerializer(serializers.ModelSerializer):
     
     def update(self, instance, validated_data):
         categories = validated_data.pop('category', [])
+
+        errors = dict()
         if len(categories)==0:
-            raise serializers.ValidationError(
-                "Auction must have at least one category."
-            )
+            errors['category'] = "Auction must have at least one category."
+        if errors:
+            raise serializers.ValidationError(errors)
         images = validated_data.pop('image',[])
 
         instance.name = validated_data.get('name', instance.name)

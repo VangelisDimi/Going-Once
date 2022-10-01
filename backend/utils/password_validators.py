@@ -5,7 +5,7 @@ class CapsLowerNumberValidator:
     def validate(self, password, user=None):
         if not (any(x.isupper() for x in password) and any(x.islower() for x in password) and any(x.isdigit() for x in password)):
             raise ValidationError(
-                _("This password must contain at must contain at least 1 uppercase character,one lowercase character and 1 numeric character."),
+                _("The password must contain at least one uppercase character,one lowercase character and one numeric character."),
                 code='no_caps_and_numbers',
             )
 
