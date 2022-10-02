@@ -26,5 +26,5 @@ label.required:after {
 }
 
 .alert.hide {
-    visibility: hidden;
+    display: none;
 }

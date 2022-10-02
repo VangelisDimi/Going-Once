@@ -1,7 +1,8 @@
 function Welcome(){
     return (
         <div>
-            Welcome to the page!
+            <h2>Going once</h2>
+            Welcome to the Auction site.
         </div>
     );
 }

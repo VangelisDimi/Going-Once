@@ -6,7 +6,7 @@ import './auctions.css'
 
 function Images({image_list}){
     const [element,setElement] = useState([]);
-    const IMG_URL = 'http://localhost:8000/media';
+    const IMG_URL = 'https://localhost:8000/media';
 
     useEffect(() => {
         let element_temp = null;
@@ -24,12 +24,12 @@ function Images({image_list}){
             let i=0;
             for(let image of image_list){
                 indicators.push(
-                    <button type="button" data-bs-target="#carouselIndicators" data-bs-slide-to={i.toString()} className={(i===0 ? "active" : "")} aria-current={(i===0 ? "true" : "")} aria-label={"Slide" + (i+1).toString()}>
+                    <button type="button" data-bs-target="#carouselIndicators" data-bs-slide-to={i.toString()} className={(i===0 ? "active" : "")} aria-current={(i===0 ? "true" : "")} aria-label={"Slide" + (i+1).toString()} key={image.image}>
                     </button>
                 );
                 images.push(
-                    <div className={"carousel-item" +  (i===0 ? " active" : "")}>
-                        <img src={IMG_URL + "/" + image} className="card-img-top" alt={"Image" + (i+1).toString()}/>
+                    <div className={"carousel-item" +  (i===0 ? " active" : "")} key={image.image}>
+                        <img src={IMG_URL + "/" + image.image} className="card-img-top" alt={"Image" + (i+1).toString()}/>
                     </div>
                 )
                 i++;

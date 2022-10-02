@@ -1,6 +1,6 @@
-function ModalError(){
+function ErrorModal({children,id="ErrorModal"}){
     return(
-        <div className="modal fade" id="Modal" tabIndex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+        <div className="modal fade" id={id} tabIndex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
         <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
             <div className="modal-header">
@@ -9,7 +9,7 @@ function ModalError(){
             </div>
             <div className="modal-body">
                 <div className="alert alert-danger">
-                    <i className="bi bi-exclamation-triangle-fill"></i> There was an unexpected error while trying to log-out.
+                    <i className="bi bi-exclamation-triangle-fill"></i> {children}
                 </div>
             </div>
             </div>
@@ -18,4 +18,4 @@ function ModalError(){
     );
 }
 
-export {ModalError}
+export {ErrorModal}

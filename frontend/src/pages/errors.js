@@ -22,4 +22,10 @@ function NotApproved(){
     );
 }
 
-export {NotFound,NoPermission,NotApproved};
+function NoConnection(){
+    return(
+        <>Couldn't establish connection to the server :(</>
+    );
+}
+
+export {NotFound,NoPermission,NotApproved,NoConnection};

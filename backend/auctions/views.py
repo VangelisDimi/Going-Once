@@ -171,7 +171,7 @@ class GetAuction(APIView):
         auction_serializer['status']=auction.get_status()
 
         auction_serializer['current_bid']=auction.get_current_bid()
-        auction_bids = Bid.objects.filter(auction=auction).values('time','amount','pk','bidder_id')
+        auction_bids = Bid.objects.filter(auction=auction).values('time','amount','pk','bidder_id').order_by('-time')
         auction_serializer['num_bids']=len(auction_bids)
         if auction_serializer['own_auction'] or (request.user.is_authenticated and request.user.is_staff):
             for bid in auction_bids:

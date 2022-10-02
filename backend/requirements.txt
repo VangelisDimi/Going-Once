@@ -4,3 +4,5 @@ djangorestframework
 knox
 lxml
 pytz
+django-sslserver
+django-cors-headers

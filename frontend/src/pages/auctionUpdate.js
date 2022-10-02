@@ -99,7 +99,7 @@ function UpdateAuctionForm({auction}){
 
     return(
         <form onSubmit={handleSubmit}>
-            <h3>Create Auction</h3>
+            <h3>Update Auction</h3>
             <label htmlFor="auction-name" className='required'> Name </label>
             <input type="text" className="form-control" name="name" id="auction-name" defaultValue={auction.name} required/>
             <div>

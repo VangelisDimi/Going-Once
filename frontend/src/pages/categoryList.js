@@ -46,7 +46,7 @@ function CategoryNavigate(){
     return(
         <div>
         <ul className="list-group">
-             <a href='/navigate/all' className="list-group-item list-group-item-action">Browse all auctions</a>
+            <a href='/navigate/all' className="list-group-item list-group-item-action">Browse all auctions</a>
         </ul>
 
         <h4>Browse by category:</h4>

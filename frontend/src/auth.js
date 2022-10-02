@@ -1,6 +1,7 @@
 import {useEffect,createContext,useState} from 'react';
 import  {axios} from './axios_config'
 import Modal from  'bootstrap/js/dist/modal'
+import { NoConnection } from './pages/errors';
 
 const AuthContext = createContext();
 
@@ -57,22 +58,23 @@ const AuthInfo = ({children}) => {
 
     return(
         <AuthContext.Provider value={contextData}>
-            {connection ?
-                (!loading ? children : null)
+            {!loading ?
+                (connection ? children : <NoConnection/>)
                 :
-                <>Couldn't establish connection to the server :(</>
+                null
             }
         </AuthContext.Provider>
     );
 
     function adminLogin(event){
-        login(event,true);
+        return login(event,true);
     };
 
     function login(event,admin=false) {
         let url = '/users/login/';
         if(admin) url = '/users/admin/login/'
-        axios.post(url,{},{ 
+        
+        return axios.post(url,{},{ 
             auth:{
                 "username": event.target.username.value,
                 "password": event.target.password.value,
@@ -132,7 +134,7 @@ const AuthInfo = ({children}) => {
                 localStorage.removeItem('token');
             }
             else{
-                const myModal = new Modal(document.getElementById('Modal'));
+                const myModal = new Modal(document.getElementById('ErrorModal'));
                 myModal.show();
             }
         })

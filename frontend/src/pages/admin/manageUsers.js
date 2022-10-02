@@ -2,6 +2,8 @@ import {useState,useEffect,useContext} from 'react';
 import {useSearchParams} from 'react-router-dom';
 import RequestContext from '../../requests'
 import {NavigatePages} from '../../components/pagination'
+import {ErrorModal} from '../../components/errors'
+import Modal from  'bootstrap/js/dist/modal'
 
 function AdminList() {
     const {getAdminList,approveUser} = useContext(RequestContext);
@@ -72,6 +74,10 @@ function AdminList() {
         approveUser(user_id)
         .then(res => {
             refreshData();
+        })
+        .catch(function (error){
+            const myModal = new Modal(document.getElementById('ManageUsersErrorModal'));
+            myModal.show();
         });
     }
 
@@ -166,6 +172,10 @@ function UserList() {
         approveUser(user_id)
         .then(res => {
             refreshData();
+        })
+        .catch(function (error){
+            const myModal = new Modal(document.getElementById('ManageUsersErrorModal'));
+            myModal.show();
         });
     }
 
@@ -193,6 +203,7 @@ function ManageUsers() {
                 <div className="tab-pane fade show active" id="users-tab-pane" role="tabpanel" aria-labelledby="users-tab" tabIndex="0"><UserList/></div>
                 <div className="tab-pane fade" id="admins-tab-pane" role="tabpanel" aria-labelledby="admins-tab" tabIndex="0"><AdminList/></div>
         </div>
+        <ErrorModal id="ManageUsersErrorModal">There was an unexpected error during the submision.</ErrorModal>
         </>
     );
 }

@@ -14,7 +14,7 @@ function EditButtons({status,num_bids}){
         return(
             <>  
                 <button type="button" className="btn btn-secondary btn-margin" onClick={()=>navigate('edit')}> 
-                    <i class="bi bi-pencil-fill"></i> Edit
+                    <i className="bi bi-pencil-fill"></i> Edit
                 </button>
 
                 {status==='active'  ?
@@ -29,7 +29,7 @@ function EditButtons({status,num_bids}){
         return(
             <>  
                 <button type="button" className="btn btn-secondary btn-margin" disabled> 
-                    <i class="bi bi-pencil-fill"></i> Edit
+                    <i className="bi bi-pencil-fill"></i> Edit
                 </button>
 
                 {status==='closed'  ?
@@ -41,34 +41,57 @@ function EditButtons({status,num_bids}){
     }
 }
 
-function SubmitBid({auction_id,status}){
+function SubmitBid({auction_id,status,own_bid,current}){
     const {submitBid} = useContext(RequestContext);
+    const [errors,setErrors] = useState({
+        bid:'',
+    });
 
     if(status==='closed') return null;
 
     function handleSubmit(event){
         event.preventDefault();
+        event.target.amount.className = "form-control no-spinbox"
+
+        if(own_bid){
+            event.target.amount.className = "form-control no-spinbox is-invalid"
+            errors.bid = "You can't bid two times in a row."
+            setErrors({...errors});
+            return;
+        }
+        else if(event.target.amount.value <= current){
+            event.target.amount.className = "form-control no-spinbox is-invalid"
+            errors.bid = "Bid must be higher than current bid."
+            setErrors({...errors});
+            return;
+        }
+
         submitBid(event,auction_id)
         .then(res => {
-            
+            window.location.reload();
+        })
+        .catch(function (error) {
+            event.target.amount.className = "form-control no-spinbox is-invalid";
+            errors.bid = "There was an uncexpected error while trying to submit the bid.";
+            setErrors({...errors});
         });
     }
 
     function Modal(){
         return(
-            <div class="modal fade" id="Modal" tabindex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Confirm bid sumbmission</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div className="modal fade" id="Modal" tabIndex="-1" aria-labelledby="ModalLabel" aria-hidden="true">
+                <div className="modal-dialog modal-dialog-centered">
+                    <div className="modal-content">
+                    <div className="modal-header">
+                        <h5 className="modal-title" id="exampleModalLabel">Confirm bid sumbmission</h5>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
+                    <div className="modal-body">
                         Once you submit a bid you can't undo
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="submit" class="btn btn-success">Submit</button>
+                    <div className="modal-footer">
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" className="btn btn-success" data-bs-dismiss="modal">Submit</button>
                     </div>
                     </div>
                 </div>
@@ -77,15 +100,18 @@ function SubmitBid({auction_id,status}){
     }
 
     return(
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit}> 
             <div className="col-sm-5">
                 <label htmlFor="auction-start_bid"> Bid </label>
-                <div className="input-group" name="geo-location" id="auction-start_bid">
+                <div className="input-group has-validation" name="bid" id="auction-start_bid">
                     <div className="input-group-text">$</div>
-                    <input type="number" placeholder="0.00" className="form-control no-spinbox" name="amount"/>
+                    <input type="number" placeholder="0.00" step="0.01" min="0" className="form-control no-spinbox" name="amount" required/>
                     <button type="button" className="btn btn-success" data-bs-toggle="modal" data-bs-target="#Modal" disabled={status!=='active'}>
                         Submit
                     </button>
+                    <div className="invalid-feedback" id="invalid-bid">
+                        {errors.bid}
+                    </div>
                 </div>
                 {status==='pending'  ?
                     <p className="card-text text-muted"> Auction has not started yet</p> :
@@ -179,7 +205,7 @@ function Auction(){
                     <p className="card-text"><AuctionCategories categories={auction.categories}/></p>
                     {auction.own_auction ? <EditButtons status={auction.status} num_bids={auction.num_bids}/> : null}
                     <h6 className="card-text"> <AuctionPrice start={auction.first_bid} current={auction.current_bid} num_bids={auction.num_bids} own_bid={auction.own_bid} status={auction.status}/></h6>
-                    {authorized && !auction.own_auction && !userInfo.is_staff && userInfo.is_approved ? <SubmitBid auction_id={auction.pk} status={auction.status}/> : null}
+                    {authorized && !auction.own_auction && !userInfo.is_staff && userInfo.is_approved ? <SubmitBid auction_id={auction.pk} status={auction.status} own_bid={auction.own_bid} current={auction.current_bid}/> : null}
                     {(auction.own_auction || userInfo.is_staff) && auction.bids.length>0 ? <BidList bids={auction.bids}/> : null}
                 </div> 
                 <div className="card-footer">

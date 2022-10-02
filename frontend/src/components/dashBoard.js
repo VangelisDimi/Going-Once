@@ -1,7 +1,9 @@
-import {useContext} from 'react';
+import {useContext,useState} from 'react';
 import { useNavigate,useLocation,NavLink } from 'react-router-dom';
 import AuthContext from '../auth';
-import {ModalError} from './errors';
+import {ErrorModal} from './errors';
+import './dashBoard.css'
+import Modal from  'bootstrap/js/dist/modal'
 
 function LoginDropDown(){
     const location = useLocation().pathname;
@@ -11,9 +13,9 @@ function LoginDropDown(){
     return(
         <ul className="navbar-nav">
             <li className="nav-item dropdown">
-            <a className="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <button className="nav-link dropdown-toggle button" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 User
-            </a>
+            </button>
             <ul className="dropdown-menu">
                 <LoginField/>
                 <li><hr className="dropdown-divider"/></li>
@@ -37,16 +39,26 @@ function SignupButton(){
 
 function LoginField(){
     const {login} = useContext(AuthContext);
+    const [errors,setErrors] = useState({
+        username:'Wrong username or password.',
+        password:'Wrong username or password.'
+    });
 
     return (
         <form onSubmit={handleSubmit}>
                 <div className="form-group">
-                <label htmlFor="login-username"> Username </label>
-                <input className="form-control form-control-sm" placeholder="Username" type="text" name="username" id="login-username" required/>
+                    <label htmlFor="login-username"> Username </label>
+                    <input className="form-control form-control-sm" placeholder="Username" type="text" name="username" id="login-username" required/>
+                    <div className="invalid-feedback">
+                        {errors.username}
+                    </div>
                 </div>
                 <div className="form-group">
-                <label htmlFor="login-password"> Password </label>
-                <input  className="form-control form-control-sm" placeholder="Password" type="password" name="password" id="login-password" required/>
+                    <label htmlFor="login-password"> Password </label>
+                    <input  className="form-control form-control-sm" placeholder="Password" type="password" name="password" id="login-password" required/>
+                    <div className="invalid-feedback">
+                        {errors.password}
+                    </div>
                 </div>
                 <div className="form-group">
                 <button type="submit" className="btn btn-primary">Log-In</button>
@@ -56,7 +68,21 @@ function LoginField(){
 
     function handleSubmit(event){
         event.preventDefault();
-        login(event);
+        event.target.username.className = "form-control"
+        event.target.password.className = "form-control"
+
+
+        login(event)
+        .catch((error) => {
+            if (error.response && error.response.status===401) {
+                event.target.username.className = "form-control is-invalid";
+                event.target.password.className = "form-control is-invalid";
+            }
+            else{
+                const myModal = new Modal(document.getElementById('ErrorModal'));
+                myModal.show();
+            }
+        })
     };
 }
 
@@ -64,7 +90,7 @@ function LogoutButton(){
     const {logout} = useContext(AuthContext);
 
     function handleLogout(event){
-        logout()
+        logout();
     }
 
     return (
@@ -143,7 +169,7 @@ function NavBarLogo(){
         );
     }
 
-    return <NavLink className="navbar-brand" to='/'>Logo</NavLink>
+    return <NavLink className="navbar-brand" to='/'>GoingOnce</NavLink>
 }
 
 function UserDropDown(){
@@ -152,11 +178,11 @@ function UserDropDown(){
     return(
         <ul className="navbar-nav">
             <li className="nav-item dropdown">
-            <a className="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <button className="nav-link dropdown-toggle button" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                 {userInfo.username}
                     &thinsp;
                 {userInfo.is_staff ? <span className="badge bg-secondary">Admin</span> : null}
-            </a>
+            </button>
             <ul className="dropdown-menu">
                     <li><hr className="dropdown-divider"/></li>
                     <LogoutButton/>
@@ -180,7 +206,11 @@ function DashBoard(){
             {authorized ? <UserDropDown/> : <LoginDropDown/>}
         </nav>
 
-        {authorized ? <ModalError/> : null}
+        {authorized ? 
+            <ErrorModal>There was an unexpected error while trying to log-out.</ErrorModal> 
+            : 
+            <ErrorModal>There was an unexpected error while trying to log-in.</ErrorModal>
+        }
         </>
     );
 }
