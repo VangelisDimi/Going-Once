@@ -5,6 +5,8 @@ import {AuctionList,NoAuctions} from '../components/auctions'
 import {NavigatePages} from '../components/pagination'
 import {TagForm} from '../components/forms'
 
+//Auction navigation main page
+
 function PriceForm({min,max}){
     return(
         <>

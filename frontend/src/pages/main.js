@@ -1,3 +1,5 @@
+//Main page (logged-in user)
+
 function Main(){
     return(
         <div>

@@ -1,3 +1,5 @@
+//Error pages
+
 function NotFound(){
     return(
         <div>

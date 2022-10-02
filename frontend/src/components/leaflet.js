@@ -5,6 +5,7 @@ import './leaflet.css'
 import 'leaflet/dist/leaflet.css'
 import icon from 'leaflet/dist/images/marker-icon.png';
 
+//Map for choosing auction location
 function CreationMap({position,setPosition}){
     const map = useRef();
 
@@ -71,6 +72,7 @@ function CreationMap({position,setPosition}){
     );
 }
 
+//Map for viewing auction location
 function DisplayMap({position}){
     const map = useRef();
 

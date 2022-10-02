@@ -88,7 +88,7 @@ const AuthInfo = ({children}) => {
     };
 
     function adminSignup(event) {
-        signup(event,true);
+        return signup(event,true);
     }
 
     function signup(event,admin=false) {

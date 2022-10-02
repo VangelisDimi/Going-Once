@@ -1,3 +1,4 @@
+//Welcome page (guest user)
 function Welcome(){
     return (
         <div>

@@ -6,6 +6,8 @@ import {Images,AuctionPrice,AuctionCategories,AuctionDate,AuctionMap,AuctionStat
 import UpdateAuction from './auctionUpdate';
 import AuthContext from '../auth';
 
+//Auction information page
+
 function EditButtons({status,num_bids}){
     const navigate = useNavigate();
 

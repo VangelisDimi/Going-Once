@@ -3,6 +3,8 @@ import {useSearchParams} from 'react-router-dom';
 import RequestContext from '../requests';
 import {NavigatePages} from '../components/pagination'
 
+//List of categories in navigation page
+
 function CategoryList({categories}){
     const [elements,setElements] = useState([]);
 

@@ -5,6 +5,8 @@ import {NavigatePages} from '../../components/pagination'
 import {ErrorModal} from '../../components/errors'
 import Modal from  'bootstrap/js/dist/modal'
 
+//User management tables
+
 function AdminList() {
     const {getAdminList,approveUser} = useContext(RequestContext);
     const [searchParams, setSearchParams] = useState(new URLSearchParams());

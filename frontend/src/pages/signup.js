@@ -2,6 +2,8 @@ import { useContext,useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthContext from '../auth';
 
+//Signup page
+
 function SignupSuccess(){
     const navigate = useNavigate();
 

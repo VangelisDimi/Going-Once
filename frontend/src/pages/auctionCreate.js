@@ -5,6 +5,8 @@ import moment from 'moment'
 
 import {BackButton,TagForm,MapForm} from '../components/forms';
 
+//Form for auction creation
+
 function CreateAuctionForm(){
     const {createAuction} = useContext(RequestContext);
     const position = useRef();

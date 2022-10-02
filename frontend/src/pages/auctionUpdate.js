@@ -4,6 +4,8 @@ import RequestContext from '../requests';
 import {BackButton,TagForm,MapForm} from '../components/forms';
 import moment from 'moment'
 
+//Form to change auction info
+
 function UpdateAuctionForm({auction}){
     const position = useRef();
     const tagsRef = useRef();

@@ -1,3 +1,4 @@
+//Error popup
 function ErrorModal({children,id="ErrorModal"}){
     return(
         <div className="modal fade" id={id} tabIndex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">

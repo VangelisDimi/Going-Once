@@ -5,6 +5,8 @@ import {ErrorModal} from './errors';
 import './dashBoard.css'
 import Modal from  'bootstrap/js/dist/modal'
 
+//Navbar on top of page
+
 function LoginDropDown(){
     const location = useLocation().pathname;
 

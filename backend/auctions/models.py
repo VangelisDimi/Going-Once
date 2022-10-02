@@ -6,9 +6,9 @@ from rest_framework import serializers
 from datetime import datetime
 import pytz
 
+#Auction models
 #null=False
 
-# Create your models here.
 class Category(models.Model):
     class Meta:
         verbose_name_plural = "categories"

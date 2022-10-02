@@ -1,5 +1,6 @@
 import { useEffect,useState,useCallback } from 'react';
 
+//Pagination controls
 function NavigatePages({pages,current,params,setParams}){
     const [elements,setElements] = useState([]);
 
