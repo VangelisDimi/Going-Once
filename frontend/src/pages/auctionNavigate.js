@@ -76,7 +76,7 @@ function SideBar({params,setParams}){
 
     return(
         <form onSubmit={handleSubmit}>
-            <TagForm ref={tagsRef} tags={tags}/>
+            <TagForm ref={tagsRef} tags={tags} required={false}/>
             <LocationForm value={params.get('location')}/>
             <DescriptionForm value={params.get('description')}/>
             <PriceForm min={params.get('min_price') ? params.get('min_price') :0} max={params.get('max_price') ? params.get('max_price') :9999}/>

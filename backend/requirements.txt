@@ -1,8 +1,10 @@
 Django
-django_rest_knox
+django-rest-knox
 djangorestframework
-knox
 lxml
 pytz
 django-sslserver
 django-cors-headers
+psycopg2
+Pillow
+tzdata

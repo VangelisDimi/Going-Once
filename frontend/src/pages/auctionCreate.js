@@ -65,7 +65,7 @@ function CreateAuctionForm(){
                 <i className="bi bi-exclamation-triangle-fill"></i> There was an unexpected error in the submission
             </div>
             <button type="submit" className="btn btn-primary"> 
-                <i class="bi bi-upload"></i> Create
+                <i className="bi bi-upload"></i> Create
             </button>
         </form>
     );
