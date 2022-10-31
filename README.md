@@ -1,5 +1,12 @@
 # Going Once
 A full stack online auction site made using React,Django,Bootstrap and PostgreSQL.
+<p float="left">
+  <img src="https://github.com/VangelisDimi/Going-Once/blob/main/screenshots/Screenshot_20221031_120339.png" width="500" />
+  <img src="https://github.com/VangelisDimi/Going-Once/blob/main/screenshots/Screenshot_20221031_120601.png" width="500" /> 
+  <img src="https://github.com/VangelisDimi/Going-Once/blob/main/screenshots/Screenshot_20221031_121601.png" width="500" />
+  <img src="https://github.com/VangelisDimi/Going-Once/blob/main/screenshots/Screenshot_20221031_121739.png" width="500" />
+  <img src="https://github.com/VangelisDimi/Going-Once/blob/main/screenshots/Screenshot_20221031_122114.png" width="500" />
+</p>
 
 ## Setup
 ### SSL certificates
